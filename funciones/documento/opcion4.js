@@ -1,39 +1,34 @@
 require('dotenv').config();
 const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
-const os = require('node:os')
-// const net = require('node:net').SocketAddress
 const {objevacio} = require('../objvacio/reqbody')
 const {decodificador} = require('../jwt/decodificador');
-// const { SocketAddress,Socket,Server } = require('node:net');
-// const http = require('http')
 
 let observador = (req,res,next) => objevacio(req.signedCookies) ? res.status(401).send("logeate") : next();
 
-let doc_factura = (req,res,next) => {
-    let host=req.hostname;
-    let user_ip=req.ip;
-    let valid_coki = req.signedCookies;
-    let {opc1} = req.body;
-    // res.status(200).json({supos_ip:user_ip,hst:host})
+let mostrar4 = (req,res,next) => {
+    // let valid_coki = req.signedCookies;
+    let {cli,sugerencia} = req.body;
+    console.log(req.body)
     // let vendedor_data = decodificador(valid_coki.cdk);
     let vendedor_data='cadena';
     // typeof vendedor_data=='string' ? bd_conexion(res,mes,vendedor_data.vendedor) : res.status(401).send(vendedor_data);
-    typeof vendedor_data=='string' ? bd_conexion(res,opc1) : res.status(401).send(vendedor_data);
+    typeof vendedor_data=='string' ? bd_conexion(res,sugerencia,cli) : res.status(401).send(vendedor_data);
 }
 
-let bd_conexion=(res,opc1)=>{
+let bd_conexion=(res,sugerencia,cli)=>{
     conexion = new Connection(config);
     conexion.connect();
     conexion.on('connect',(err)=>{
         if(err){console.log("ERROR: ",err);}
-        else{ bd_consulta(res,opc1); }
+        else{ bd_consulta(res,sugerencia,cli); }
     });
 }
 
-let bd_consulta = (res,opc1) =>{
-    // let sp_sql="select a.TipEnt,a.codtra,a.Consig,a.dirent,b.nomven,a.observ,a.orde,a.codcli from mst01fac a join tbl01ven b on b.codven=a.codven where a.cdocu in ('01','03') and a.ndocu=@doc";
-    // let sp_sql="select a.TipEnt,a.codtra,a.Consig,a.dirent,b.nomven,a.observ,a.orde,a.codcli from mst01fac a join tbl01ven b on b.codven=a.codven_usu where a.cdocu in ('01','03') and a.ndocu=@doc";
-    let sp_sql="select a.TipEnt,a.codtra,a.Consig,a.dirent,b.nomven,a.observ,a.orde,a.codcli,a.ndocu from mst01fac a join tbl01ven b on b.codven=a.codven_usu where a.cdocu in ('01','03') and a.ndocu=@doc";
+let bd_consulta = (res,sugerencia,cli)=>{
+    let caracter="%"+sugerencia+"%";
+    // let reemplazo='C18122';
+    // let sp_sql="select dirent from mst01cli where codcli=@cliente1 union select dirent from Dtl_Cliente_Alias where codcli=@cliente2 and dirent<>''"
+    let sp_sql="select dirent from mst01cli where codcli=@cliente1 union select dirent from Dtl_Cliente_Alias where codcli=@cliente2 and dirent<>'' and dirent like @sugerencia";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){ res.status(401).send("error interno"); }
         else{
@@ -52,17 +47,19 @@ let bd_consulta = (res,opc1) =>{
                     })
                     respuesta.push(tmp);
                 });
-                // console.log(respuesta);
+                console.log(respuesta);
                 Object.assign(respuesta2,respuesta);
-                console.log(respuesta2[0]);
+                // console.log(respuesta2);
                 let cadenitajson=JSON.stringify(respuesta2);
                 res.status(200).json(cadenitajson);
             }
         }
     })
-    consulta.addParameter('doc',TYPES.VarChar,opc1);
+    consulta.addParameter('cliente1',TYPES.VarChar,cli);
+    consulta.addParameter('cliente2',TYPES.VarChar,cli);
+    consulta.addParameter('sugerencia',TYPES.VarChar,caracter);
     conexion.execSql(consulta);
     // conexion.callProcedure(consulta);
 }
 
-module.exports={observador,doc_factura}
+module.exports={mostrar4}

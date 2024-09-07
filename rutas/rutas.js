@@ -2,4 +2,6 @@
 const login = require('../login/loggeo.js');
 const vendedor = require('../vendedor/vendedor.js');
 
-module.exports={login,vendedor}
+const coti = require('../cotizacion/cotizacion.js');
+
+module.exports={login,vendedor,coti}

@@ -29,4 +29,6 @@ app.use(process.env.BASE_URI+'/login',ruta.login);
 
 app.use(process.env.BASE_URI+'/vendedor',ruta.vendedor);
 
+app.use(process.env.BASE_URI+'/coti',ruta.coti);
+
 app.listen(port,()=>console.log("servicio levantado"))
