@@ -5,35 +5,34 @@ const {decodificador} = require('../jwt/decodificador');
 
 let observador = (req,res,next) => objevacio(req.signedCookies) ? res.status(401).send("logeate") : next();
 
-let bproducto = (req,res,next) => {
+let promocion = (req,res,next) => {
     // let valid_coki = req.signedCookies;
-    let {sugerencia,cctl} = req.body;
+    let {promo} = req.body;
     console.log(req.body)
     // let vendedor_data = decodificador(valid_coki.cdk);
     let vendedor_data='cadena';
     // typeof vendedor_data=='string' ? bd_conexion(res,mes,vendedor_data.vendedor) : res.status(401).send(vendedor_data);
-    typeof vendedor_data=='string' ? bd_conexion(res,sugerencia,cctl) : res.status(401).send(vendedor_data);
+    typeof vendedor_data=='string' ? bd_conexion(res,promo) : res.status(401).send(vendedor_data);
 }
 
-let bd_conexion=(res,sugerencia,cctl)=>{
+let bd_conexion=(res,promo)=>{
     conexion = new Connection(config);
     conexion.connect();
     conexion.on('connect',(err)=>{
         if(err){console.log("ERROR: ",err);}
-        else{ bd_consulta(res,sugerencia,cctl); }
+        else{ bd_consulta(res,promo); }
     });
 }
 
-let bd_consulta = (res,sugerencia,cctl)=>{
+let bd_consulta = (res,promo)=>{
     // let caracter="'"+"%"+sugerencia+"%"+"'";///no usar porqe sobre escribe las comillas simples
-    let caracter="%"+sugerencia+"%";    
-    // let sp_sql="select top 10 a.codi,a.descr,CAST(a.stoc as int)as'stoc',a.pcus,a.vvus,b.dscto_maxven,a.codf,a.marc from prd0101 a join dtl_dscto_marca_tc b on b.codmar=a.codmar join mst01cli c on c.tipocl=b.codtcl where a.estado=1 and cast(a.stoc as int)>0 and a.descr like @pista and c.tipocl=@alfabeto";
-    let sp_sql="select top 10 a.codi,a.descr,CAST(a.stoc as int)as'stoc',a.pcus,a.vvus,b.dscto_maxven,a.codf,a.marc from prd0101 a join dtl_dscto_marca_tc b on b.codmar=a.codmar join mst01cli c on c.tipocl=b.codtcl where a.estado=1 and cast(a.stoc as int)>0 and a.descr like @pista and c.tipocl=@alfabeto group by a.codi,a.descr,a.stoc,a.pcus,a.vvus,b.dscto_maxven,a.codf,a.marc";
+    let sp_sql="select b.codi,a.nomprom,b.monto,b.dsct,a.tipdsct,a.tipdsctoto,a.tipagrupa from mst_promocion a join dtl_promocion_progra b on b.idprom=a.idprom where YEAR(a.fecini)=YEAR(GETDATE()) AND MONTH(GETDATE()) BETWEEN MONTH(a.fecini) AND MONTH(a.fecfin) AND a.idprom=@promo";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){ res.status(401).send("error interno"); }
         else{
             conexion.close();
             if(rows.length==0) res.status(401).send("sin resultados?");
+            // if(rows.length==0) res.status(401).json({});
             else{
                 let respuesta=[];
                 let respuesta2={};
@@ -49,15 +48,15 @@ let bd_consulta = (res,sugerencia,cctl)=>{
                 });
                 // console.log(respuesta);
                 Object.assign(respuesta2,respuesta);
+                console.log(respuesta2)
                 let cadenitajson=JSON.stringify(respuesta2);
                 res.status(200).json(cadenitajson);
             }
         }
     })
-    consulta.addParameter('pista',TYPES.VarChar,caracter);
-    consulta.addParameter('alfabeto',TYPES.VarChar,cctl);
+    consulta.addParameter('promo',TYPES.VarChar,promo);
     conexion.execSql(consulta);
     // conexion.callProcedure(consulta);
 }
 
-module.exports={bproducto}
+module.exports={promocion}

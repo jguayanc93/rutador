@@ -1,0 +1,17 @@
+require('dotenv').config();
+const express = require('express');
+const router = express.Router();
+const {config,Connection,Request,TYPES} = require('../conexion/cadena.js');
+const jws = require('jws');
+
+let {bprom} = require('../funciones/promocion/buscar.js')
+let {analisarprom} = require('../funciones/promocion/analisar.js')
+let {addprom} = require('../funciones/promocion/add.js')
+
+router.use(express.json());
+
+router.post('/verificar',bprom,analisarprom)
+
+router.post('/add',addprom)
+
+module.exports=router

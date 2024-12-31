@@ -11,8 +11,11 @@ let {mostrar2} = require('../funciones/documento/opcion2.js')
 let {mostrar3} = require('../funciones/documento/opcion3.js')
 let {mostrar4} = require('../funciones/documento/opcion4.js')
 let {mostrar5} = require('../funciones/documento/opcion5.js')
-let {actualisar} = require('../funciones/documento/correccion.js')
+// let {actualisar} = require('../funciones/documento/correccion.js')
 let {chekear} = require('../funciones/documento/revisar.js')
+let {buscar_factura} = require('../funciones/documento/correccion.js')
+let {programar_factura} = require('../funciones/documento/programar.js')
+let {programar_minutos} = require('../funciones/documento/programar_minutos.js')
 
 router.use(express.json());
 
@@ -28,16 +31,18 @@ router.post('/opc2',mostrar2)
 router.post('/opc3',mostrar3)
 router.post('/opc4',mostrar4)
 router.post('/opc5',mostrar5)
-router.post('/actualisar',actualisar)
+// router.post('/actualisar',actualisar)////sobrando
 router.post('/revisar',chekear)
 // router.post('/opc6',mostrar)
 
-router.post('/programar',(req,res)=>{})
+router.post('/programar',buscar_factura)
+router.post('/programarventanilla',programar_factura)
+router.post('/programarventanillaminutos',programar_minutos)
 
-router.post('/clientes',(req,res)=>{})
+// router.post('/clientes',(req,res)=>{})
 
-router.post('/pedidos',(req,res)=>{})
+// router.post('/pedidos',(req,res)=>{})
 
-router.post('/cotizaciones',(req,res)=>{})
+// router.post('/cotizaciones',(req,res)=>{})
 
 module.exports=router

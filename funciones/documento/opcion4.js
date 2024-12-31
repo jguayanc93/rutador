@@ -26,7 +26,6 @@ let bd_conexion=(res,sugerencia,cli)=>{
 
 let bd_consulta = (res,sugerencia,cli)=>{
     let caracter="%"+sugerencia+"%";
-    // let reemplazo='C18122';
     // let sp_sql="select dirent from mst01cli where codcli=@cliente1 union select dirent from Dtl_Cliente_Alias where codcli=@cliente2 and dirent<>''"
     let sp_sql="select dirent from mst01cli where codcli=@cliente1 union select dirent from Dtl_Cliente_Alias where codcli=@cliente2 and dirent<>'' and dirent like @sugerencia";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{

@@ -39,7 +39,8 @@ let bd_consulta = (res,sp,remplazo,doc)=>{
         if(err){ res.status(401).send("error interno"); }
         else{
             conexion.close();
-            res.status(401).send("actualisado");
+            // res.status(200).send("actualisado");
+            res.status(200).json({"resultado":"actualisado"})
         }
     })
     consulta.addParameter('update',TYPES.VarChar,remplazo);
