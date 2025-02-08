@@ -31,9 +31,9 @@ let bd_conexion=(res,opc1)=>{
 }
 
 let bd_consulta = (res,opc1) =>{
-    // let sp_sql="select a.TipEnt,a.codtra,a.Consig,a.dirent,b.nomven,a.observ,a.orde,a.codcli from mst01fac a join tbl01ven b on b.codven=a.codven where a.cdocu in ('01','03') and a.ndocu=@doc";
     // let sp_sql="select a.TipEnt,a.codtra,a.Consig,a.dirent,b.nomven,a.observ,a.orde,a.codcli from mst01fac a join tbl01ven b on b.codven=a.codven_usu where a.cdocu in ('01','03') and a.ndocu=@doc";
-    let sp_sql="select a.TipEnt,a.codtra,a.Consig,a.dirent,b.nomven,a.observ,a.orde,a.codcli,a.ndocu from mst01fac a join tbl01ven b on b.codven=a.codven_usu where a.cdocu in ('01','03') and a.ndocu=@doc";
+    // let sp_sql="select a.TipEnt,a.codtra,a.Consig,a.dirent,b.nomven,a.observ,a.orde,a.codcli,a.ndocu from mst01fac a join tbl01ven b on b.codven=a.codven_usu where a.cdocu in ('01','03') and a.ndocu=@doc";
+    let sp_sql="select a.TipEnt,c.despacho,CASE(a.TipEnt)when 3 then 'T0001' when 4 then a.codtra2 END,CASE(a.TipEnt) when 3 then (select nomtra from tbl01tra where codtra=a.codtra) when 4 then (select nomtra from tbl01tra where codtra=a.codtra2) END,a.Consig,a.dirent,b.nomven,a.observ,a.orde,a.codcli,a.ndocu from mst01fac a join tbl01ven b on b.codven=a.codven_usu join tbl_tipo_despacho c on (c.IDdespacho=a.TipEnt) join tbl01tra d on (d.codtra=a.codtra) where a.cdocu in ('01','03') and a.ndocu=@doc";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){ res.status(401).send("error interno"); }
         else{
@@ -52,7 +52,6 @@ let bd_consulta = (res,opc1) =>{
                     })
                     respuesta.push(tmp);
                 });
-                // console.log(respuesta);
                 Object.assign(respuesta2,respuesta);
                 console.log(respuesta2[0]);
                 let cadenitajson=JSON.stringify(respuesta2);

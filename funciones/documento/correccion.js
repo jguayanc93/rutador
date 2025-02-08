@@ -360,14 +360,33 @@ let doc_checking=(res,documento,cantidad)=>{
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){ res.status(401).send("error interno"); }
         else{
-            conexion.close();
-            res.status(200).json({"estado":"factura programada"});
+            // conexion.close();
+            // res.status(200).json({"estado":"factura programada"});
+            doc_despacho(res,documento,cantidad);
         }
     })
     consulta.addParameter('documento',TYPES.VarChar,documento);
     consulta.addParameter('ventanilla',TYPES.Int,0);
     consulta.addParameter('locaprovincia',TYPES.Int,0);
     consulta.addParameter('usr',TYPES.VarChar,'');
+    conexion.execSql(consulta);
+}
+
+////nueva parte para ingresarlo a despacho aun por testear
+let doc_despacho=(res,documento,cantidad)=>{
+    // let sp_sql="insert into tbl01_api_almacen_documento_checking2 values(@documento,@ventanilla,@locaprovincia,@usr)";
+    let sp_sql="insert into tbl01_api_despacho_embalados values(@documento,@embalado,@embusr,@retirar)";
+    let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
+        if(err){ res.status(401).send("error interno"); }
+        else{
+            conexion.close();
+            res.status(200).json({"estado":"factura programada"});
+        }
+    })
+    consulta.addParameter('documento',TYPES.VarChar,documento);
+    consulta.addParameter('embalado',TYPES.Int,0);
+    consulta.addParameter('embusr',TYPES.VarChar,'');
+    consulta.addParameter('retirar',TYPES.Int,0);
     conexion.execSql(consulta);
 }
 

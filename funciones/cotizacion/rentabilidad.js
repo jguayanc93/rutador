@@ -21,7 +21,7 @@ let calc_rentibilidad = (res,objeto) => {
         ///////////solo para el nombre
         let nombre=objeto[indice][0];
         ///////////solo para cantidad
-        let cantidad=objeto[indice][1];
+        let cantidad=parseInt(objeto[indice][1]);
         ///////////solo para venta
         let venta=objeto[indice][3];
         ///////////solo para el descuento concedido
@@ -34,7 +34,7 @@ let calc_rentibilidad = (res,objeto) => {
         ///////solo para el costo total
         let saca_costo=parseFloat(objeto[indice][2]).toFixed(2)*parseInt(objeto[indice][1]);
         //////solo para la diferencia
-        let diferencia=totalisado-saca_costo;
+        let diferencia=(totalisado-(saca_costo).toFixed(2)).toFixed(2);
         /////solo para rentabilidad
         let rentabilidad=(diferencia/saca_costo).toFixed(4);
 

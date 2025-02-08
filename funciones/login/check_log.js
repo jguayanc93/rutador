@@ -4,9 +4,16 @@ const {config,Connection,Request,TYPES} = require('../../conexion/cadena')
 let {objevacio} = require('../objvacio/reqbody');
 let {jwtgenerator} = require('../jwt/generador');
 
-let login = (req,res,next) => objevacio(req.body) ? res.send("body objeto vacio") : logeo_conexion(res,req.body.userclient,req.body.passclient);
+// let login =(req,res,next)=> objevacio(req.body) ? res.send("body objeto vacio") : logeo_conexion(res,req.body.userclient,req.body.passclient);
+let login =(req,res,next)=> objevacio(req.body) ? res.send("body objeto vacio") : extraer_data(res,req.body);
 
-let logeo_conexion = (res,userclient,passclient) => {    
+let extraer_data=(res,body)=>{
+    let campos=[];
+    for(const valor of Object.values(body)) campos.push(valor);
+    logeo_conexion(res,...campos);
+}
+
+let logeo_conexion = (res,userclient,passclient) => {
     conexion = new Connection(config);
     conexion.connect();
     conexion.on('connect',(err)=>{

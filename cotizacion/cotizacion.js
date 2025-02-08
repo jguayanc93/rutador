@@ -7,6 +7,7 @@ const jws = require('jws');
 let {bcliente} = require('../funciones/cotizacion/cliente_buscar.js')
 let {idcliente} = require('../funciones/cotizacion/cliente_identificar.js')
 let {bproducto} = require('../funciones/cotizacion/buscar_producto.js')
+let {bproductos} = require('../funciones/cotizacion/buscar_productos.js');
 let {rentabilidad} = require('../funciones/cotizacion/rentabilidad.js')
 let {promocion} = require('../funciones/cotizacion/promociones.js')
 let {crear} = require('../funciones/cotizacion/crear_cotizacion.js')
@@ -18,7 +19,8 @@ router.post('/busqueda',bcliente)
 
 router.post('/identificador',idcliente)
 
-router.post('/producto',bproducto)
+router.post('/productoid',bproducto)///////producto identificado
+router.post('/producto',bproductos)
 
 router.post('/rentabilidad',rentabilidad)
 

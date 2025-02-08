@@ -1,6 +1,8 @@
 require('dotenv').config();
 const express = require('express');
+const multer = require('multer');
 const router = express.Router();
+const upload = multer();//////puedes configurar esto como un objeto con sus diferentes opciones para varios casos
 const {config,Connection,Request,TYPES} = require('../conexion/cadena.js')
 const jws = require('jws');
 const base64url = require('base64url');
@@ -66,8 +68,9 @@ let {decodificador} = require('../funciones/jwt/decodificador.js')
 // }
 
 router.use(express.json());
+// router.use(express.urlencoded({extended:true}))
 
-router.post('/',login)
+router.post('/',upload.none(),login)
 
 router.post('/chekear',mostrar)////deberia solo mostrar el cookie externo mas nada
 
