@@ -5,13 +5,6 @@ const {decodificador} = require('../jwt/decodificador');
 
 let observador = (req,res,next) => objevacio(req.signedCookies) ? res.status(401).send("logeate") : next();
 
-// let addprom = (req,res,next) => {
-//     let {ncoti,fullpromo} = req.body;
-//     console.log("objeto de promocion especifica")
-//     console.log(req.body);
-//     console.log(ncoti);
-//     console.log(fullpromo);
-// }
 
 let addprom = (req,res,next) => {
     // let valid_coki = req.signedCookies;
@@ -31,11 +24,49 @@ let bd_conexion=(res,ncoti,fullpromo)=>{
         if(err){console.log("ERROR: ",err);}
         else{
             console.log("revisar si es descuento o bonificacion")
-            Object.keys(fullpromo).includes("descuento") ? cabesera_refresco(res,ncoti,fullpromo) : detallado_bucle(res,ncoti,fullpromo);
-            // cabesera_refresco(res,ncoti,fullpromo);
-            // detallado_bucle(res,ncoti,fullpromo);
+            // Object.keys(fullpromo).includes("descuento") ? cabesera_refresco(res,ncoti,fullpromo) : detallado_bucle(res,ncoti,fullpromo);
+            Object.keys(fullpromo).includes("descuento") ? revisar_cabesa(res,ncoti,fullpromo) : detallado_bucle(res,ncoti,fullpromo);
+            
         }
     });
+}
+
+let revisar_cabesa=(res,ncoti,fullpromo)=>{
+    let sp_sql="select tota,toti,totn from mst01cot where ndocu=@ncoti";
+    let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
+        if(err){
+            console.log("error interno")
+            console.log(err);
+        }
+        else{
+            if(rows.length==0) res.status(401).send("sin resultados?");
+            else{
+                let respuesta=[];
+                let respuesta2={};
+                let contador=0;
+                rows.forEach(fila=>{
+                    let tmp={};
+                    fila.map(data=>{
+                        if(contador>=fila.length) contador=0;
+                        typeof data.value=='string' ? tmp[contador]=data.value.trim() : tmp[contador]=data.value;
+                        contador++;
+                    })
+                    respuesta.push(tmp);
+                });
+                Object.assign(respuesta2,respuesta);
+                // console.log(respuesta);
+                // console.log("aqui mira");
+                console.log(respuesta2[0])
+                fullpromo["descuento"][1]=respuesta2[0][0]+fullpromo["descuento"][1];
+                fullpromo["descuento"][2]=respuesta2[0][1]+fullpromo["descuento"][2];
+                fullpromo["descuento"][3]=respuesta2[0][2]+fullpromo["descuento"][3];
+                // console.log(fullpromo)
+                cabesera_refresco(res,ncoti,fullpromo);
+            }
+        }
+    })
+    consulta.addParameter('ncoti',TYPES.VarChar,fullpromo["descuento"][0]);
+    conexion.execSql(consulta);
 }
 
 let cabesera_refresco=(res,ncoti,fullpromo)=>{

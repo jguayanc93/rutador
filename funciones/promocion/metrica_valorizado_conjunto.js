@@ -24,6 +24,8 @@ function m_valorizado_conjunto(res,nprom,cotdetalle,promcabesa,promdetalle,tipop
         }
     }
     let retorno_conjunto=suma_cantidades(items_validos,items_promos2,n_item,promcabesa);
+    console.log("retorno revisar cantidades")
+    console.log(retorno_conjunto)
     return [retorno_conjunto,items_validos2,items_promos2,numero_documento,cabesatota,cabesatotn];
 }
 function suma_cantidades(items_validos,items_promos2,n_item,promcabesa){
@@ -33,15 +35,25 @@ function suma_cantidades(items_validos,items_promos2,n_item,promcabesa){
     for(let item in items_validos) contador+=items_validos[item][6];
     for(let iprom in items_promos2) unidades_minimas=items_promos2[iprom][1];
     ///////REVIVIR EN CASO DE SER NECESITADO EMERGENCIA
+    console.log("aqui esta el primer problema")
+    console.log(contador)
+    console.log("aqui esta el segundo problema")
+    console.log(unidades_minimas)
     let division=contador/unidades_minimas;
+    console.log("aqui esta el problema")
+    console.log(division)
     let cantidad_promocion=Math.floor(division);
+    console.log("aqui esta la cantidad a otorgar")
+    console.log(cantidad_promocion);
     ///////APLICANDO LA DISPONIBILIDAD MAXIMA DE UNIDADES POR PROMOCION
-    console.log("ESTE VALOR DEBE SER TESTEADO ANTES DE COMPARARLO")
+    console.log("ESTE VALOR DEBE SER TESTEADO ANTES DE COMPARARLO PORQE ES PARA EL MAXIMO DE UNIDADES")
     console.log(promcabesa[7]);
     if(promcabesa[7]!=0){
         if(promcabesa[7]<=cantidad_promocion){
+            console.log("aqui1")
             return [items_validos[0][0],items_validos[0][1],items_validos[0][2],items_validos[0][3],items_validos[0][4],"item nombre",n_item,promcabesa[7]];
         }
+        // se esta ejecutando este
         else{return [items_validos[0][0],items_validos[0][1],items_validos[0][2],items_validos[0][3],items_validos[0][4],"item nombre",n_item,cantidad_promocion];}
     }
     else{

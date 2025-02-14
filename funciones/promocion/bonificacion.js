@@ -140,6 +140,8 @@ let bucle_bonificacion2=(res,items_validos,items_validos2,items_promos2,tamaño,
     if(tamaño.length<=contador){
         conexion.close();
         let solo_valores=Object.values(objeto_promociones);
+        //////no te olvides derivar a una funcion q discrime a las cantidades en 0
+        
         res.status(200).json(objeto_promociones)
     }
     else{
@@ -190,8 +192,15 @@ let bucle_bonificacion2=(res,items_validos,items_validos2,items_promos2,tamaño,
                             // objeto_promociones[respuesta[item][0]][6]=contador_item;
                         }
                         else{
+                            console.log("revisar esta salida de cantidades para la respuesta final")
+                            console.log(items_validos[7]);
+                            if(items_validos[7]==0){}
+                            else{
+                                objeto_promociones[respuesta[item][0]]=[items_validos[0],items_validos[1],items_validos[2],items_validos[3],items_validos[4],items_validos[5],contador_item,items_validos[7],"D","D",respuesta[item][6],respuesta[item][0],respuesta[item][1],respuesta[item][2],"UND",descripcion_acomodada,0,0,0,0,'01',respuesta[item][4],"S",1,"UND",""];
+                            }
                             // objeto_promociones[respuesta[item][0]]=[items_validos2[0],items_validos2[1],items_validos2[2],items_validos2[3],items_validos2[4],items_validos2[5],contador_item,items_validos2[7],"D","D",respuesta[item][6],respuesta[item][0],respuesta[item][1],respuesta[item][2],"UND",descripcion_acomodada,0,0,0,0,'01',respuesta[item][4],"S",1,"UND",""];
-                            objeto_promociones[respuesta[item][0]]=[items_validos[0],items_validos[1],items_validos[2],items_validos[3],items_validos[4],items_validos[5],contador_item,items_validos[7],"D","D",respuesta[item][6],respuesta[item][0],respuesta[item][1],respuesta[item][2],"UND",descripcion_acomodada,0,0,0,0,'01',respuesta[item][4],"S",1,"UND",""];
+
+                            // objeto_promociones[respuesta[item][0]]=[items_validos[0],items_validos[1],items_validos[2],items_validos[3],items_validos[4],items_validos[5],contador_item,items_validos[7],"D","D",respuesta[item][6],respuesta[item][0],respuesta[item][1],respuesta[item][2],"UND",descripcion_acomodada,0,0,0,0,'01',respuesta[item][4],"S",1,"UND",""];
                         }
                         contador_item++;
                         // objeto_promociones[tamaño[contador]].push([items_validos2[tamaño[contador]][2],respuesta[item][0],descripcion_acomodada])

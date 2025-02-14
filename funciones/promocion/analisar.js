@@ -130,7 +130,7 @@ let prom_detallado=(res,nprom,cotdetalle,promcabesa,tipopromo,tipometrica)=>{
                     respuesta.push(tmp);
                 });
                 Object.assign(respuesta2,respuesta);
-                console.log(respuesta2);
+                // console.log(respuesta2);
                 // prom_acomodar(res,nprom,cotdetalle,promcabesa,respuesta2,tipopromo,tipometrica);
                 // direccionador(res,nprom,cotdetalle,promcabesa,respuesta2,tipopromo,tipometrica);
                 direccionador2(res,nprom,cotdetalle,promcabesa,respuesta2,tipopromo,tipometrica);
@@ -180,6 +180,8 @@ let direccionador2=(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipome
     tipopromo[0]==1 ? respuesta_devuelta=v_xitems(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica) : respuesta_devuelta=v_xitotalisado(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica);
     console.log("esto regreso despues de mandarlo al filtro de promociones")
     console.log(respuesta_devuelta);
+    console.log("esto es el tipo de promo")
+    console.log(tipopromo)
     if(tipopromo[1]==1){
         // promo_terminada=descuento(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica,respuesta_devuelta[0],respuesta_devuelta[1]);
         // descuento(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica,respuesta_devuelta[0],respuesta_devuelta[1],respuesta_devuelta[2],respuesta_devuelta[3],respuesta_devuelta[4]);

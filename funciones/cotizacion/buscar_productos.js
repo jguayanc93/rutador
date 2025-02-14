@@ -28,7 +28,8 @@ let bd_consulta = (res,sugerencia)=>{
     // let caracter="'"+"%"+sugerencia+"%"+"'";///no usar porqe sobre escribe las comillas simples
     let caracter="%"+sugerencia+"%";
     // let sp_sql="select top 10 a.codi,a.descr,CAST(a.stoc as int)as'stoc',a.pcus,a.vvus,b.dscto_maxven,a.codf,a.marc from prd0101 a join dtl_dscto_marca_tc b on b.codmar=a.codmar join mst01cli c on c.tipocl=b.codtcl where a.estado=1 and cast(a.stoc as int)>0 and a.descr like @pista and c.tipocl=@alfabeto group by a.codi,a.descr,a.stoc,a.pcus,a.vvus,b.dscto_maxven,a.codf,a.marc";
-    let sp_sql="select top 5 a.codi,a.descr,CAST(a.stoc as int) as 'principal',CAST(b.stoc as int) as 'm&m' from prd0101 a join prd0108 b on (b.codi=a.codi) where a.estado=1 AND CAST(a.vvus as  int)>1 and a.descr like @pista order by a.stoc desc";
+    // let sp_sql="select top 5 a.codi,a.descr,CAST(a.stoc as int) as 'principal',CAST(b.stoc as int) as 'm&m' from prd0101 a join prd0108 b on (b.codi=a.codi) where a.estado=1 AND CAST(a.vvus as  int)>1 and a.descr like @pista order by a.stoc desc";
+    let sp_sql="select top 5 a.codi,a.descr,CAST(a.stoc as int) as 'principal',ISNULL(CAST(b.stoc as int),0) as 'm&m' from prd0101 a left join prd0108 b on (b.codi=a.codi) where a.estado=1 AND CAST(a.vvus as  int)>1 and a.descr like @pista order by a.stoc desc";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){ res.status(401).send("error interno"); }
         else{

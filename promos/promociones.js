@@ -12,6 +12,7 @@ let {pivot} = require('../funciones/promocion/pivot.js')
 router.use(express.json());
 
 router.post('/verificar',bprom,analisarprom)
+// router.post('/verificar',bprom,pivot)
 
 router.post('/add',addprom)
 
