@@ -3,19 +3,20 @@ const Request = require('tedious').Request;
 const TYPES = require('tedious').TYPES;
 
 const config = {
-    server:'192.168.1.101',
+    server:process.env.SERVER,
     authentication:{
         type:'default',
         options:{
-            userName:'sa',
-            password:'Nava2008'
+            userName:process.env.BDUSER,
+            password:process.env.BDPASS
         }
     },
     options:{
         encrypt:false,
-        database:'bdnava03',
+        database:process.env.BDNAME,
         rowCollectionOnRequestCompletion:true,
-        trustServerCertificate:true
+        trustServerCertificate:true,
+        requestTimeout:0
     }
 }
 

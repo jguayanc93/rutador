@@ -7,4 +7,6 @@ const coti = require('../cotizacion/cotizacion.js');
 
 const prom = require('../promos/promociones.js');
 
-module.exports={login,vendedor,coti,prom}
+const cuotas= require('../cuotas/cuotas.js');
+
+module.exports={login,vendedor,coti,prom,cuotas}

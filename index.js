@@ -33,4 +33,6 @@ app.use(process.env.BASE_URI+'/coti',ruta.coti);
 
 app.use(process.env.BASE_URI+'/prom',ruta.prom);
 
+app.use(process.env.BASE_URI+'/cuotas',ruta.cuotas);
+
 app.listen(port,()=>console.log("servicio levantado"))
