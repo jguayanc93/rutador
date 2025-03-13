@@ -5,12 +5,13 @@ const {decodificador} = require('../jwt/decodificador');
 
 // const posibilidades = require('./combinaciones.js');
 // const {posibilidades,buscador_tipo} = require('./combinaciones.js');
-const {posibilidades,buscador_tipo,buscador_metrica} = require('./combinaciones.js');
+const {posibilidades,buscador_tipo,buscador_metrica,buscador_grupo} = require('./combinaciones.js');
 
 const dsct_aplicado = require('./tipo113.js');
 const bonificacion_aplicada = require('./tipo131.js');
 const dsct_aplicado_conjunto = require('./tipo313.js');
 const bonificacion_aplicada_conjunto = require('./tipo331.js');
+const {agrupador}=require('./agrupador.js')////debe tomar la mejor promocion
 /////EN PRUEBA EL SEPARADOR DE CONDICIONES DE PROMOCIONES
 const v_xitems=require('./venta_item.js')
 const v_xitotalisado=require('./venta_total.js')
@@ -22,23 +23,23 @@ let observador = (req,res,next) => objevacio(req.signedCookies) ? res.status(401
 
 let analisarprom = (req,res,next) => {
     // let valid_coki = req.signedCookies;
-    let {ncoti,nprom} = req.body;
+    let {ncoti,nprom,grupos} = req.body;
     // let vendedor_data = decodificador(valid_coki.cdk);
     let vendedor_data='cadena';
     // typeof vendedor_data=='string' ? bd_conexion(res,mes,vendedor_data.vendedor) : res.status(401).send(vendedor_data);
-    typeof vendedor_data=='string' ? bd_conexion(res,ncoti,nprom,next) : res.status(401).send(vendedor_data);
+    typeof vendedor_data=='string' ? bd_conexion(res,ncoti,nprom,grupos) : res.status(401).send(vendedor_data);
 }
 
-let bd_conexion=(res,ncoti,nprom)=>{
+let bd_conexion=(res,ncoti,nprom,grupos)=>{
     conexion = new Connection(config);
     conexion.connect();
     conexion.on('connect',(err)=>{
         if(err){console.log("ERROR: ",err);}
-        else{ bd_consulta(res,ncoti,nprom); }
+        else{ bd_consulta(res,ncoti,nprom,grupos); }
     });
 }
 
-let bd_consulta = (res,ncoti,nprom)=>{
+let bd_consulta = (res,ncoti,nprom,grupos)=>{
     // let sp_sql="select codi,codf,descr,cant,tota,totn from dtl01cot where ndocu=@coti order by item";
     let sp_sql="select CONVERT(varchar,fecha,120) as fecha,cdocu,ndocu,codcli,tcam,mone,moneitm,aigv,item,codi,codf,marc,umed,descr,cant,preu,tota,dsct,totn,codalm,cost,msto,ucon,ucom,obse from dtl01cot where ndocu=@coti order by item";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
@@ -61,7 +62,7 @@ let bd_consulta = (res,ncoti,nprom)=>{
                 // console.log(respuesta);
                 Object.assign(respuesta2,respuesta);
                 console.log(respuesta2);
-                prom_cabesera(res,nprom,respuesta2);
+                prom_cabesera(res,nprom,respuesta2,grupos);
                 // let cadenitajson=JSON.stringify(respuesta2);
                 // res.status(200).json(cadenitajson);
             }
@@ -71,9 +72,9 @@ let bd_consulta = (res,ncoti,nprom)=>{
     conexion.execSql(consulta);
 }
 
-let prom_cabesera=(res,nprom,cotdetalle)=>{
-    // let sp_sql="select idprom,nomprom,desprom,porvta,tipdsct,tipdsctoto,metrica from mst_promocion where estado=1 and idprom=@nprom";
-    let sp_sql="select idprom,nomprom,desprom,porvta,tipdsct,tipdsctoto,metrica,undvtaprom from mst_promocion where estado=1 and idprom=@nprom";
+let prom_cabesera=(res,nprom,cotdetalle,grupos)=>{
+    //let sp_sql="select idprom,nomprom,desprom,porvta,tipdsct,tipdsctoto,metrica,undvtaprom from mst_promocion where estado=1 and idprom=@nprom";
+    let sp_sql="select idprom,nomprom,desprom,porvta,tipdsct,tipdsctoto,metrica,undvtaprom,lpdsct,idagrupa,prioagrupa from mst_promocion where estado=1 and idprom=@nprom";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){ res.status(401).send("error promcabesera"); }
         else{
@@ -97,9 +98,25 @@ let prom_cabesera=(res,nprom,cotdetalle)=>{
                 // let buscar_tipo=[respuesta2[0][3],respuesta2[0][4],respuesta2[0][5]];
                 let encontrado=buscador_tipo(respuesta2[0]);
                 let numero_metrica=buscador_metrica(respuesta2[0]);
+                let saber_grupo=buscador_grupo(respuesta2[0]);
                 console.log("aqui mira");
-                console.log(respuesta2[0])
-                prom_detallado(res,nprom,cotdetalle,respuesta2[0],encontrado,numero_metrica);
+                //console.log(respuesta2[0]);
+                console.log(encontrado);
+                ///PUNTO DE DIFERENCIA PARA AGRUPARLO CON OTRAS PROMOS
+                if(saber_grupo!=0 && encontrado[0]==3){
+                    if(!grupos.includes(saber_grupo)){
+                        agrupador(res,cotdetalle,saber_grupo);
+                    }
+                    else{
+                        res.status(200).json({})
+                    }
+                    // agrupador(res,cotdetalle,saber_grupo);
+                }
+                else{
+                    prom_detallado(res,nprom,cotdetalle,respuesta2[0],encontrado,numero_metrica);
+                }
+                /////////////////
+                // prom_detallado(res,nprom,cotdetalle,respuesta2[0],encontrado,numero_metrica);
             }
         }
     })

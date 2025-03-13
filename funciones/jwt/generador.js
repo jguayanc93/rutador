@@ -1,7 +1,7 @@
 const jws = require('jws');
 
 let jwtgenerator = (obj) => {
-    let userpayloaddata = {
+    let userpayloaddata2 = {
         "identificador":obj[0][0],
         "nombre":obj[0][1],
         "grupo":obj[0][2],
@@ -14,6 +14,23 @@ let jwtgenerator = (obj) => {
             "delete":false
         }
     }
+    let userpayloaddata = {
+        "identificador":obj[0][0],
+        "nombre":obj[0][1],
+        "vendedor":obj[0][2],
+        "esquema":obj[0][3],
+        "area":obj[0][4],
+        "codgrupo":obj[0][5],
+        "grupo":obj[0][6],
+        "tipo":obj[0][7],
+        "acciones":{
+            "create":false,
+            "read":true,
+            "update":true,
+            "delete":false
+        }
+    }
+
     const firma = {
         header:{alg:'HS256',"typ":"JWT"},
         payload:userpayloaddata,

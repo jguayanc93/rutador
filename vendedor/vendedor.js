@@ -17,7 +17,7 @@ let {buscar_factura} = require('../funciones/documento/correccion.js')
 let {programar_factura} = require('../funciones/documento/programar.js')
 let {programar_minutos} = require('../funciones/documento/programar_minutos.js')
 ////parte para los reportes aun en testeo
-// let {} = require('../funciones/')
+let {blistaprogramar,blistaprogramarxdia} = require('../funciones/listas/despachar.js')
 
 router.use(express.json());
 
@@ -37,7 +37,7 @@ router.post('/opc5',mostrar5)
 router.post('/revisar',chekear)
 // router.post('/opc6',mostrar)
 
-router.post('/programar',buscar_factura)
+router.post('/programar',buscar_factura,blistaprogramar)
 router.post('/programarventanilla',programar_factura)
 router.post('/programarventanillaminutos',programar_minutos)
 

@@ -12,22 +12,24 @@ let buscar_factura = (req,res,next) => {
     console.log(req.body)
     let vendedor_data='cadena';
     // // typeof vendedor_data=='string' ? bd_conexion(res,mes,vendedor_data.vendedor) : res.status(401).send(vendedor_data);
-    typeof vendedor_data=='string' ? bd_conexion(res,factura,fecha) : res.status(401).send(vendedor_data);
+    typeof vendedor_data=='string' ? bd_conexion(res,factura,fecha,next) : res.status(401).send(vendedor_data);
 }
 
-let bd_conexion=(res,factura,fecha)=>{
+let bd_conexion=(res,factura,fecha,next)=>{
+    console.log("llamando conexion")
     conexion = new Connection(config);
     conexion.connect();
     conexion.on('connect',(err)=>{
         if(err){console.log("ERROR: ",err);}
-        else{ bd_consulta(res,factura,fecha); }
+        else{ bd_consulta(res,factura,fecha,next); }
     });
 }
 
-let bd_consulta = (res,factura,fecha)=>{
+let bd_consulta = (res,factura,fecha,next)=>{
+    console.log("primera consulta")
     // let sp_sql="select TipEnt,cdocu,ndocu,nomcli,Codcdv,CodAlm,codven_usu,dirent,codtra2 from mst01fac where cdocu in ('01','03') and ndocu=@doc and flag='0'";
-    // let sp_sql="select TipEnt,cdocu,ndocu,nomcli,Codcdv,CodAlm,codven_usu,dirent from mst01fac where cdocu in ('01','03') and ndocu=@doc and flag='0'";
     let sp_sql="select TipEnt,cdocu,ndocu,nomcli,Codcdv,CodAlm,codven_usu,dirent,codtra,codtra2 from mst01fac where cdocu in ('01','03') and ndocu=@doc and flag='0'";
+    // let sp_sql="select TipEnt,cdocu,ndocu,nomcli,Codcdv,CodAlm,codven_usu,dirent,codtra,codtra2 from mst01fac where cdocu in ('01','03') AND flag<>'*' and ndocu=@doc and cdge=''";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){ res.status(401).send("error interno"); }
         else{
@@ -49,7 +51,7 @@ let bd_consulta = (res,factura,fecha)=>{
                 // doc_tipo_entrega(res,fecha,respuesta2[0]);
                 console.log(respuesta2[0]);
                 // doc_revisar_programado(res,fecha,respuesta2[0]);
-                doc_extraer_data(res,fecha,respuesta2[0]);
+                doc_extraer_data(res,fecha,respuesta2[0],next);
             }
         }
     })
@@ -57,30 +59,33 @@ let bd_consulta = (res,factura,fecha)=>{
     conexion.execSql(consulta);
 }
 
-let doc_extraer_data=(res,fecha,factura_data)=>{
-    let transporte_pronvicial
-    let sp_sql="select fac.TipEnt,fac.cdocu,fac.ndocu,cliente.codcli,fac.nomcli,fac.Codcdv,fac.CodAlm,fac.codven_usu,vend.nomven,fac.dirent from mst01fac fac join tbl01ven vend on vend.codven=fac.codven_usu join tbl01tra tra on tra.codtra=fac.codtra join mst01cli cliente on cliente.codcli=fac.codcli where cdocu in ('01','03') and ndocu=@doc and flag='0'";
-    if(factura_data[0]==3){
-        transporte_pronvicial="T0001";
-        sp_sql="select fac.TipEnt,fac.cdocu,fac.ndocu,cliente.codcli,fac.nomcli,fac.Codcdv,fac.CodAlm,fac.codven_usu,vend.nomven,fac.dirent,fac.codtra,tra.nomtra,depart.nomdep,provincia.nompro from mst01fac fac join tbl01ven vend on vend.codven=fac.codven_usu join tbl01tra tra on tra.codtra=fac.codtra join mst01cli cliente on cliente.codcli=fac.codcli join tbl01dep depart on (depart.coddep=cliente.coddep AND depart.codpai=cliente.codpai) join tbl01pro provincia on (provincia.codpro=cliente.codpro AND provincia.coddep=cliente.coddep AND provincia.codpai=cliente.codpai) where cdocu in ('01','03') and ndocu=@doc and flag='0'";
-    }
-    else if(factura_data[0]==4){
-        sp_sql="select fac.TipEnt,fac.cdocu,fac.ndocu,cliente.codcli,fac.nomcli,fac.Codcdv,fac.CodAlm,fac.codven_usu,vend.nomven,fac.dirent,fac.codtra2,tra.nomtra,depart.nomdep,provincia.nompro from mst01fac fac join tbl01ven vend on vend.codven=fac.codven_usu join tbl01tra tra on tra.codtra=fac.codtra2 join mst01cli cliente on cliente.codcli=fac.codcli join tbl01dep depart on (depart.coddep=cliente.coddep AND depart.codpai=cliente.codpai) join tbl01pro provincia on (provincia.codpro=cliente.codpro AND provincia.coddep=cliente.coddep AND provincia.codpai=cliente.codpai) where cdocu in ('01','03') and ndocu=@doc and flag='0'";
-        console.log("revisar para despues porqe puede que solo esta confirmado el tra cuando se genera la guia")
-        console.log("modificar luego la consulta segun los campos de transportista cuando sus campos estan vacios")
-        if(factura_data[9].trim()=='' && factura_data[8].trim()!='T0001'){
-            transporte_pronvicial=factura_data[8].trim();
-        }
-        else if(factura_data[9].trim()!='' && factura_data[8].trim()=='T0001'){
-            transporte_pronvicial=factura_data[9].trim();
-        }
-        else if(factura_data[9].trim()=='' && factura_data[8].trim()=='T0001'){
-            transporte_pronvicial="desconocido";
-        }
-    }
-    
+let doc_extraer_data=(res,fecha,factura_data,next)=>{
+    // let transporte_pronvicial
+    // let sp_sql="select fac.TipEnt,fac.cdocu,fac.ndocu,cliente.codcli,fac.nomcli,fac.Codcdv,fac.CodAlm,fac.codven_usu,vend.nomven,fac.dirent from mst01fac fac join tbl01ven vend on vend.codven=fac.codven_usu join tbl01tra tra on tra.codtra=fac.codtra join mst01cli cliente on cliente.codcli=fac.codcli where cdocu in ('01','03') and ndocu=@doc and flag='0'";
+    // if(factura_data[0]==3){
+    //     transporte_pronvicial="T0001";
+    //     sp_sql="select fac.TipEnt,fac.cdocu,fac.ndocu,cliente.codcli,fac.nomcli,fac.Codcdv,fac.CodAlm,fac.codven_usu,vend.nomven,fac.dirent,fac.codtra,tra.nomtra,depart.nomdep,provincia.nompro from mst01fac fac join tbl01ven vend on vend.codven=fac.codven_usu join tbl01tra tra on tra.codtra=fac.codtra join mst01cli cliente on cliente.codcli=fac.codcli join tbl01dep depart on (depart.coddep=cliente.coddep AND depart.codpai=cliente.codpai) join tbl01pro provincia on (provincia.codpro=cliente.codpro AND provincia.coddep=cliente.coddep AND provincia.codpai=cliente.codpai) where cdocu in ('01','03') and ndocu=@doc and flag='0'";
+    // }
+    // else if(factura_data[0]==4){
+    //     sp_sql="select fac.TipEnt,fac.cdocu,fac.ndocu,cliente.codcli,fac.nomcli,fac.Codcdv,fac.CodAlm,fac.codven_usu,vend.nomven,fac.dirent,fac.codtra2,tra.nomtra,depart.nomdep,provincia.nompro from mst01fac fac join tbl01ven vend on vend.codven=fac.codven_usu join tbl01tra tra on tra.codtra=fac.codtra2 join mst01cli cliente on cliente.codcli=fac.codcli join tbl01dep depart on (depart.coddep=cliente.coddep AND depart.codpai=cliente.codpai) join tbl01pro provincia on (provincia.codpro=cliente.codpro AND provincia.coddep=cliente.coddep AND provincia.codpai=cliente.codpai) where cdocu in ('01','03') and ndocu=@doc and flag='0'";
+    //     console.log("revisar para despues porqe puede que solo esta confirmado el tra cuando se genera la guia")
+    //     console.log("modificar luego la consulta segun los campos de transportista cuando sus campos estan vacios")
+    //     if(factura_data[9].trim()=='' && factura_data[8].trim()!='T0001'){
+    //         transporte_pronvicial=factura_data[8].trim();
+    //     }
+    //     else if(factura_data[9].trim()!='' && factura_data[8].trim()=='T0001'){
+    //         transporte_pronvicial=factura_data[9].trim();
+    //     }
+    //     else if(factura_data[9].trim()=='' && factura_data[8].trim()=='T0001'){
+    //         transporte_pronvicial="desconocido";
+    //     }
+    // }
+    let sp_sql="jc_factura_despacho_identificador";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
-        if(err){ res.status(401).send("error interno"); }
+        if(err){
+            // res.status(401).send("error interno");
+            console.log(err);
+        }
         else{
             if(rows.length==0) res.status(200).json({"estado":"factura extraccion falla"});
             else{
@@ -97,21 +102,27 @@ let doc_extraer_data=(res,fecha,factura_data)=>{
                     respuesta.push(tmp);
                 });
                 Object.assign(respuesta2,respuesta);
-                // console.log(respuesta2[0]);
+                console.log(respuesta2[0]);
                 // doc_revisar_programado(res,fecha,respuesta2[0]);
-                fac_items_zonas(res,fecha,respuesta2[0]);
+                fac_items_zonas(res,fecha,respuesta2[0],next);
             }
         }
     })
-    consulta.addParameter('doc',TYPES.VarChar,factura_data[2]);
-    conexion.execSql(consulta);
+    consulta.addParameter('factura',TYPES.VarChar,factura_data[2]);
+    consulta.addParameter('entrega',TYPES.Int,factura_data[0]);
+    // conexion.execSql(consulta);
+    conexion.callProcedure(consulta);
 }
 
-let fac_items_zonas=(res,fecha,factura_data)=>{
+let fac_items_zonas=(res,fecha,factura_data,next)=>{
+    console.log("llege a conocer sus zonas")
     // let sp_sql="select almacen.zona,COUNT(almacen.zona) as cantidad from dtl01fac items join tbl01_api_almacen_zonas almacen on almacen.codi=items.codi where items.ndocu=@documento and items.codi<>'0303-010001' group by almacen.zona";
     let sp_sql="select almacen.zona from dtl01fac items join tbl01_api_almacen_zonas almacen on almacen.codi=items.codi where items.ndocu=@documento and items.codi<>'0303-010001' group by almacen.zona";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
-        if(err){ res.status(401).send("error interno"); }
+        if(err){
+            // res.status(401).send("error interno");
+            console.log(err);
+        }
         else{
             if(rows.length==0) res.status(200).json({"detalle":"zonas no encontradas"});
             else{
@@ -129,7 +140,7 @@ let fac_items_zonas=(res,fecha,factura_data)=>{
                 //////////REVISAR LAS ZONAS Y LA CANTIDAD
                 let zones=[];
                 for(let zone of respuesta) zone[0]=='' ? zones.push("desconocido") : zones.push(zone[0])
-                doc_revisar_programado(res,fecha,factura_data,zones);
+                doc_revisar_programado(res,fecha,factura_data,zones,next);
             }
         }
     })
@@ -137,13 +148,17 @@ let fac_items_zonas=(res,fecha,factura_data)=>{
     conexion.execSql(consulta);
 }
 
-let doc_revisar_programado=(res,fecha,factura_data,zonas)=>{
+let doc_revisar_programado=(res,fecha,factura_data,zonas,next)=>{
+    console.log("funcion de revisar documento despachado")
     // let sp_sql="select documento,fecha,hora,minutos from tbl01_api_programar where fecha=@date and documento=@doc";
     let sp_sql="select documento,fecha,hora,minutos from tbl01_api_programar where documento=@doc";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
-        if(err){ res.status(401).send("error interno"); }
+        if(err){
+            // res.status(401).send("error interno");
+            console.log(err)
+        }
         else{
-            if(rows.length==0) doc_tipo_entrega(res,fecha,factura_data,zonas)
+            if(rows.length==0) doc_tipo_entrega(res,fecha,factura_data,zonas,next)
             else{
                 let respuesta=[];
                 let respuesta2={};
@@ -172,10 +187,10 @@ let doc_revisar_programado=(res,fecha,factura_data,zonas)=>{
     conexion.execSql(consulta);
 }
 
-let doc_tipo_entrega=(res,fecha,factura_data,zonas)=>{
+let doc_tipo_entrega=(res,fecha,factura_data,zonas,next)=>{
     // resolver lo de ventanilla despues para lo del direccionamiento
     // factura_data[0]==1 ? doc_ventanilla(res,fecha,factura_data) : doc_local(res,fecha,factura_data,zonas);
-    doc_local(res,fecha,factura_data,zonas);
+    doc_local(res,fecha,factura_data,zonas,next);
 }
 /////REVISAR ESTA CONSULTA PARA EL DESPACHO DE VENTANILLA
 let doc_ventanilla=(res,fecha,factura_data)=>{
@@ -250,7 +265,8 @@ let doc_ventanilla=(res,fecha,factura_data)=>{
     conexion.execSql(consulta);
 }
 
-let doc_local=(res,fecha,factura_data,zonas)=>{
+let doc_local=(res,fecha,factura_data,zonas,next)=>{
+    console.log("llege a procesar sus zonas")
     //////sacar zonas
     let z1=0
     let z2=0
@@ -268,15 +284,19 @@ let doc_local=(res,fecha,factura_data,zonas)=>{
     let minutos=hoy.getMinutes().toString();
 
     // let sp_sql="insert into tbl01_api_programar values(@fecha,@documento,@hora,@estado,@cliente,@despacho,@ejecutivo,@minutos,@reprogramado,@piking,@cheking,@agencia,@destino,@almacen,@nom_ejecutivo,@cod_cli,@codtra,@nomtra,@nomdep,@nompro)";
-    let sp_sql="insert into tbl01_api_programar values(@fecha,@documento,@hora,@estado,@cliente,@despacho,@ejecutivo,@minutos,@reprogramado,@piking,@cheking,@cantzone,@destino,@almacen,@nom_ejecutivo,@cod_cli,@codtra,@nomtra,@nomdep,@nompro,@zonas,@zone1,@zone2,@zone3,@desconocido)";
+    // let sp_sql="insert into tbl01_api_programar values(@fecha,@documento,@hora,@estado,@cliente,@despacho,@ejecutivo,@minutos,@reprogramado,@piking,@cheking,@cantzone,@destino,@almacen,@nom_ejecutivo,@cod_cli,@codtra,@nomtra,@nomdep,@nompro,@zonas,@zone1,@zone2,@zone3,@desconocido)";
+    let sp_sql="insert into tbl01_api_programar values(CAST(GETDATE() as date),@documento,@hora,@estado,@cliente,@despacho,@ejecutivo,@minutos,@reprogramado,@piking,@cheking,@cantzone,@destino,@almacen,@nom_ejecutivo,@cod_cli,@codtra,@nomtra,@nomdep,@nompro,@zonas,@zone1,@zone2,@zone3,@desconocido)";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
-        if(err){ res.status(401).send("error interno"); }
+        if(err){
+            // res.status(401).send("error interno");
+            console.log(err);
+        }
         else{
             // if(rows.length==0) res.status(200).json({"estado":"factura programada"});
-            if(rows.length==0){  doc_registrado(res,factura_data[2],zonas.length);  }
+            if(rows.length==0){  doc_registrado(res,factura_data[2],zonas.length,next);  }
         }
     })
-    consulta.addParameter('fecha',TYPES.VarChar,fecha);
+    // consulta.addParameter('fecha',TYPES.VarChar,fecha);
     consulta.addParameter('documento',TYPES.VarChar,factura_data[2]);
     consulta.addParameter('hora',TYPES.VarChar,hora);
     consulta.addParameter('estado',TYPES.VarChar,'0');
@@ -305,13 +325,17 @@ let doc_local=(res,fecha,factura_data,zonas)=>{
     conexion.execSql(consulta);
 }
 
-let doc_registrado=(res,documento,cantidad)=>{
+let doc_registrado=(res,documento,cantidad,next)=>{
+    console.log("llege a la insercion de la impresion")
     let sp_sql="insert into tbl01_api_almacen_documento_impreso values(@documento,@z1imp,@z2imp,@z3imp,@desconocidoimp,@cantidad,@z1usr,@z2usr,@z3usr,@desconocidousr)";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
-        if(err){ res.status(401).send("error interno"); }
+        if(err){
+            // res.status(401).send("error interno");
+            console.log(err)
+        }
         else{
             // if(rows.length==0) res.status(200).json({"estado":"factura programada"});
-            doc_picking(res,documento,cantidad);
+            doc_picking(res,documento,cantidad,next);
         }
     })
     consulta.addParameter('documento',TYPES.VarChar,documento);
@@ -327,14 +351,18 @@ let doc_registrado=(res,documento,cantidad)=>{
     conexion.execSql(consulta);
 }
 
-let doc_picking=(res,documento,cantidad)=>{
+let doc_picking=(res,documento,cantidad,next)=>{
+    console.log("llege ala insercion del picking")
     let sp_sql="insert into tbl01_api_almacen_documento_piking values(@documento,@z1pick,@z2pick,@z3pick,@desconocidopick,@cantidadpick,@z1conf,@z2conf,@z3conf,@desconocidoconf,@cantidadconf,@z1usr,@z2usr,@z3usr,@desconocidousr)";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
-        if(err){ res.status(401).send("error interno"); }
+        if(err){
+            // res.status(401).send("error interno");
+            console.log(err);
+        }
         else{
             // if(rows.length==0) res.status(200).json({"estado":"factura programada"});
             // res.status(200).json({"estado":"factura programada"});
-            doc_checking(res,documento,cantidad);
+            doc_checking(res,documento,cantidad,next);
         }
     })
     consulta.addParameter('documento',TYPES.VarChar,documento);
@@ -355,14 +383,18 @@ let doc_picking=(res,documento,cantidad)=>{
     conexion.execSql(consulta);
 }
 
-let doc_checking=(res,documento,cantidad)=>{
-    let sp_sql="insert into tbl01_api_almacen_documento_checking2 values(@documento,@ventanilla,@locaprovincia,@usr)";
+let doc_checking=(res,documento,cantidad,next)=>{
+    console.log("llege ala insercion del checking")
+    let sp_sql="insert into tbl01_api_almacen_documento_checking values(@documento,@ventanilla,@locaprovincia,@usr)";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
-        if(err){ res.status(401).send("error interno"); }
+        if(err){
+            // res.status(401).send("error interno");
+            console.log(err)
+        }
         else{
             // conexion.close();
             // res.status(200).json({"estado":"factura programada"});
-            doc_despacho(res,documento,cantidad);
+            doc_despacho(res,documento,cantidad,next);
         }
     })
     consulta.addParameter('documento',TYPES.VarChar,documento);
@@ -373,14 +405,15 @@ let doc_checking=(res,documento,cantidad)=>{
 }
 
 ////nueva parte para ingresarlo a despacho aun por testear
-let doc_despacho=(res,documento,cantidad)=>{
+let doc_despacho=(res,documento,cantidad,next)=>{
     // let sp_sql="insert into tbl01_api_almacen_documento_checking2 values(@documento,@ventanilla,@locaprovincia,@usr)";
     let sp_sql="insert into tbl01_api_despacho_embalados values(@documento,@embalado,@embusr,@retirar)";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){ res.status(401).send("error interno"); }
         else{
             conexion.close();
-            res.status(200).json({"estado":"factura programada"});
+            // res.status(200).json({"estado":"factura programada"});
+            next();
         }
     })
     consulta.addParameter('documento',TYPES.VarChar,documento);

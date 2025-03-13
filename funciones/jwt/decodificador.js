@@ -1,4 +1,4 @@
-
+const jws = require('jws');
 // let decodificador = (req,res) =>{
 //     let data = req.signedCookie;
 //     let captura = jws.verify(data.cdk,'HS256',process.env.PALABRA_CLAVE);

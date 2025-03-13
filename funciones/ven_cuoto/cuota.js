@@ -4,18 +4,18 @@ const {decodificador} = require('../jwt/decodificador')
 const {objevacio} = require('../objvacio/reqbody')
 
 let chekeador = (req,res,next) => {
-    let safe_coki = req.signedCookie;
+    let safe_coki = req.signedCookies;
     // let proto_coki = req.body;
     objevacio(safe_coki) ? res.status(401).send("logeate") : next();
     // objevacio(proto_coki) ? res.status(401).send("logeate") : next();
 }
 
 let ven_cuota = (req,res,next) => {
-    let valid_coki = req.signedCookie;
+    let valid_coki = req.signedCookies;
     let vendedor_data = decodificador(valid_coki);
-    // let mes = req.body.mes;
+    let mes = req.body.mes;
     // let codven='V0172';
-    typeof vendedor_data=='object' ? bd_conexion(res,mes,vendedor_data.payload.vendedor) : res.status(401).send(vendedor_data);
+    typeof vendedor_data=='object' ? bd_conexion(res,mes,vendedor_data) : res.status(401).send(vendedor_data);
     // typeof codven=='string' ? bd_conexion(res,mes,codven) : res.status(401).send(vendedor_data);
 }
 
@@ -48,7 +48,7 @@ let bd_consulta = (res,mes,codven) =>{
                     })
                     respuesta.push(tmp);
                 });
-                console.log(respuesta);
+                //console.log(respuesta);
                 Object.assign(respuesta2,respuesta);
                 console.log(respuesta2);
                 ////CREAR UNA NUEVA SALIDA PARA DESPLEGAR LOS MONTOS
@@ -58,7 +58,8 @@ let bd_consulta = (res,mes,codven) =>{
         }
     })
     consulta.addParameter('mes',TYPES.Int,mes);
-    consulta.addParameter('vendedor',TYPES.VarChar,codven);
+    consulta.addParameter('vendedor',TYPES.VarChar,codven.vendedor);
+    consulta.addParameter('tipo',TYPES.VarChar,codven.tipo);
     conexion.callProcedure(consulta);
 }
 

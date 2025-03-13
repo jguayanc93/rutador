@@ -35,17 +35,9 @@ let buscador_metrica=(respuesta2)=>{
     return tipo_metrica;
 }
 
-// let direccionador=(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica)=>{
-//     if(tipopromo.toString()==posibilidades["tipo113"].toString()){
-//         dsct_aplicado();
-//     }
-//     else if(tipopromo.toString()==posibilidades["tipo131"].toString()){}
-//     else if(tipopromo.toString()==posibilidades["tipo313"].toString()){
-//         dsct_aplicado_conjunto(res,nprom,cotdetalle,promcabesa,promdetalle);
-//     }
-//     else if(tipopromo.toString()==posibilidades["tipo331"].toString()){
-//         bonificacion_aplicada_conjunto(res,nprom,cotdetalle,promcabesa,promdetalle);
-//     }
-// }
+let buscador_grupo=(respuesta2)=>{
+    let tipo_grupo=respuesta2[9];
+    return tipo_grupo;
+}
 
-module.exports={posibilidades,buscador_tipo,buscador_metrica};
+module.exports={posibilidades,buscador_tipo,buscador_metrica,buscador_grupo};

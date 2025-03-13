@@ -49,14 +49,14 @@ let comprobacion_logeo = (res,usu,pass)=>{
                 Object.assign(respuesta2,respuesta);
                 respuesta2.permisos=jwtgenerator(respuesta2);
                 let cadenitajson=JSON.stringify(respuesta2.permisos);
-                // res.cookie('cdk',respuesta2.permisos,{
-                //     domain:'compudiskett.com.pe',
-                //     path:'/',
-                //     httpOnly:true,
-                //     secure:true,
-                //     sameSite:'None',
-                //     signed:true
-                // })
+                res.cookie('cdk',respuesta2.permisos,{
+                    domain:'compudiskett.com.pe',
+                    path:'/',
+                    httpOnly:true,
+                    secure:true,
+                    sameSite:'None',
+                    signed:true
+                })
                 res.status(200).json(cadenitajson);
             }
         }

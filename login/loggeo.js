@@ -9,7 +9,7 @@ const base64url = require('base64url');
 /////llamada de funciones especificas segun su path
 let {login} = require('../funciones/login/check_log.js')
 let {clean_cookie} = require('../funciones/jwt/destructor.js')
-let {mostrar} = require('../funciones/jwt/reveal.js')
+let {mostrar,formulario_insertar} = require('../funciones/jwt/reveal.js')
 let {decodificador} = require('../funciones/jwt/decodificador.js')
 
 // let login = (req,res,next)=>{
@@ -67,15 +67,17 @@ let {decodificador} = require('../funciones/jwt/decodificador.js')
 //     consulta.addParameter('passcuenta',TYPES.VarChar,pass);
 // }
 
-router.use(express.json());
+router.use(express.json(),express.urlencoded({extended:true}));
 // router.use(express.urlencoded({extended:true}))
 
 router.post('/',upload.none(),login)
 
-router.post('/chekear',mostrar)////deberia solo mostrar el cookie externo mas nada
+router.post('/chekear',formulario_insertar)////deberia solo mostrar el cookie externo mas nada
 
 router.post('/mostrar',decodificador)///debera poder decodificar luego la estructura del permiso
 
 router.post('/clean',clean_cookie)
+
+router.post('/formulario')
 
 module.exports=router;
