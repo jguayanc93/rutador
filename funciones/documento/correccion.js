@@ -282,18 +282,22 @@ let doc_local=(res,fecha,factura_data,zonas,next)=>{
     let hoy=new Date();
     let hora=hoy.getHours().toString();
     let minutos=hoy.getMinutes().toString();
-
-    // let sp_sql="insert into tbl01_api_programar values(@fecha,@documento,@hora,@estado,@cliente,@despacho,@ejecutivo,@minutos,@reprogramado,@piking,@cheking,@agencia,@destino,@almacen,@nom_ejecutivo,@cod_cli,@codtra,@nomtra,@nomdep,@nompro)";
+    
     // let sp_sql="insert into tbl01_api_programar values(@fecha,@documento,@hora,@estado,@cliente,@despacho,@ejecutivo,@minutos,@reprogramado,@piking,@cheking,@cantzone,@destino,@almacen,@nom_ejecutivo,@cod_cli,@codtra,@nomtra,@nomdep,@nompro,@zonas,@zone1,@zone2,@zone3,@desconocido)";
-    let sp_sql="insert into tbl01_api_programar values(CAST(GETDATE() as date),@documento,@hora,@estado,@cliente,@despacho,@ejecutivo,@minutos,@reprogramado,@piking,@cheking,@cantzone,@destino,@almacen,@nom_ejecutivo,@cod_cli,@codtra,@nomtra,@nomdep,@nompro,@zonas,@zone1,@zone2,@zone3,@desconocido)";
+    //let sp_sql="insert into tbl01_api_programar values(CAST(GETDATE() as date),@documento,@hora,@estado,@cliente,@despacho,@ejecutivo,@minutos,@reprogramado,@piking,@cheking,@cantzone,@destino,@almacen,@nom_ejecutivo,@cod_cli,@codtra,@nomtra,@nomdep,@nompro,@zonas,@zone1,@zone2,@zone3,@desconocido)";
+    let sp_sql="jc_programar_documento_tablas";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){
-            // res.status(401).send("error interno");
-            console.log(err);
+            res.status(401).send("error interno");
+            // console.log(err);
         }
         else{
+            conexion.close();
             // if(rows.length==0) res.status(200).json({"estado":"factura programada"});
-            if(rows.length==0){  doc_registrado(res,factura_data[2],zonas.length,next);  }
+            if(rows.length==0){
+                // doc_registrado(res,factura_data[2],zonas.length,next);
+                next()
+            }
         }
     })
     // consulta.addParameter('fecha',TYPES.VarChar,fecha);
@@ -321,8 +325,7 @@ let doc_local=(res,fecha,factura_data,zonas,next)=>{
     consulta.addParameter('zone2',TYPES.Int,z2);
     consulta.addParameter('zone3',TYPES.Int,z3);
     consulta.addParameter('desconocido',TYPES.Int,desconocido);
-    
-    conexion.execSql(consulta);
+    conexion.callProcedure(consulta);
 }
 
 let doc_registrado=(res,documento,cantidad,next)=>{

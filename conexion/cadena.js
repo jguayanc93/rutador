@@ -3,7 +3,7 @@ const Request = require('tedious').Request;
 const TYPES = require('tedious').TYPES;
 
 const config = {
-    server:process.env.SERVER,
+    server:'192.168.1.101',
     authentication:{
         type:'default',
         options:{
