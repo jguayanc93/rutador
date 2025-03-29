@@ -13,7 +13,7 @@ let decodificador = (galleta) => {
     try{
         let captura = jws.verify(galleta.cdk,process.env.ALG_ENCRYPT,process.env.PALABRA_CLAVE)
         if(captura){
-            let descifrado=jws.decode(data.cdk);
+            let descifrado=jws.decode(galleta.cdk);
             return descifrado.payload;
         }
         else{ return "token invalido"; }

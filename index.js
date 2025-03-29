@@ -10,19 +10,19 @@ const app = express();
 
 const port = process.env.PORT || 3000;
 /////PROXY PASAR DE CABESERA
-// app.set('trust proxy','127.0.0.1');
+app.set('trust proxy','127.0.0.1');
 // app.use(cors())
-app.use(cors({
-    origin:"https://landing.compudiskett.com.pe",
-    methods:['GET','POST'],
-    credentials:true
-}))
-
 // app.use(cors({
-//     origin:"http://127.0.0.1",
+//     origin:"https://landing.compudiskett.com.pe",
 //     methods:['GET','POST'],
 //     credentials:true
 // }))
+
+app.use(cors({
+    origin:"http://127.0.0.1",
+    methods:['GET','POST'],
+    credentials:true
+}))
 
 app.use([express.json(),cookieParser(process.env.SECRET_PASS)])
 
@@ -34,7 +34,7 @@ app.post('/v1',(req,res)=>{ res.status(200).json({"msg":"start checkpoint"}) })
 app.use(process.env.BASE_URI+'/login',ruta.login);
 
 app.use(process.env.BASE_URI+'/vendedor',ruta.vendedor);
-
+////NO TE OLVIDES DE AGREGAR UNA NUEVA RUTA PARA LA MODIFICACION DE TUS COTIS
 app.use(process.env.BASE_URI+'/coti',ruta.coti);
 
 app.use(process.env.BASE_URI+'/prom',ruta.prom);

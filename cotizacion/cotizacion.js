@@ -13,6 +13,8 @@ let {promocion} = require('../funciones/cotizacion/promociones.js')
 let {crear} = require('../funciones/cotizacion/crear_cotizacion.js')
 let {bcotizacion} = require('../funciones/cotizacion/buscar_cotizacion.js')
 
+let {bcotizacion_limpia} = require('../funciones/cotizacion/modificar_cotizacion.js')
+
 router.use(express.json());
 
 router.post('/busqueda',bcliente)
@@ -30,5 +32,7 @@ router.post('/opg',promocion)
 router.post('/creacion',crear)
 
 router.post('/buscar',bcotizacion)
+
+router.post('/modificar',bcotizacion_limpia)
 
 module.exports=router
