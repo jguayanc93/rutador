@@ -25,8 +25,9 @@ let bd_conexion=(res,ncoti)=>{
 }
 
 let bd_consulta = (res,ncoti)=>{
-    // let sp_sql="select codf,marc,descr,cant,preu,totn,dsct,codalm from dtl01cot where ndocu=@coti order by item";
-    let sp_sql="select CONVERT(varchar,fecha,111),ndocu,codf,marc,descr,cant,preu,totn,dsct,codalm from dtl01cot where ndocu=@coti AND flag='0' AND LEFT(codi,4)<>'0303' AND LEFT(descr,11)<>'GRATIS/PROM' order by item";
+    // let sp_sql="select CONVERT(varchar,a.fecha,111),a.ndocu,a.codi,a.descr,a.cant,a.preu,a.tota,a.dsct,a.codf,a.marc,b.tipocl from dtl01cot a inner join mst01cli b on (b.codcli=a.codcli) where a.ndocu=@coti AND a.flag='0' AND LEFT(a.codi,4)<>'0303' AND LEFT(a.descr,11)<>'GRATIS/PROM' order by a.item";
+    // let sp_sql="select CONVERT(varchar,a.fecha,111),a.ndocu,a.codi,a.descr,a.cant,a.preu,a.tota,a.dsct,a.codf,a.marc,b.tipocl,a.fecha,a.cdocu,a.ndocu,a.codcli,a.tcam,a.mone,a.moneitm,a.aigv,'item',a.codi,a.codf,a.marc,a.umed,a.descr,a.cant,a.preu,a.tota,a.dsct,a.totn,a.codalm,a.cost,a.msto from dtl01cot a inner join mst01cli b on (b.codcli=a.codcli) where a.ndocu=@coti AND a.flag='0' AND LEFT(a.codi,4)<>'0303' AND LEFT(a.descr,11)<>'GRATIS/PROM' order by a.item";
+    let sp_sql="select b.tipocl,a.fecha,a.cdocu,a.ndocu,a.codcli,a.tcam,a.mone,a.moneitm,a.aigv,'item',a.codi,a.codf,a.marc,a.umed,a.descr,a.cant,a.preu,a.tota,a.dsct,a.totn,a.codalm,a.cost,a.msto from dtl01cot a inner join mst01cli b on (b.codcli=a.codcli) inner join mst01cot c on (c.ndocu=a.ndocu) where a.ndocu=@coti AND c.flag='0' AND LEFT(a.codi,4)<>'0303' AND LEFT(a.descr,11)<>'GRATIS/PROM' order by a.item";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){ res.status(401).send("error interno"); }
         else{
@@ -54,7 +55,6 @@ let bd_consulta = (res,ncoti)=>{
     })
     consulta.addParameter('coti',TYPES.VarChar,ncoti);
     conexion.execSql(consulta);
-    // conexion.callProcedure(consulta);
 }
 
 module.exports={bcotizacion_limpia}

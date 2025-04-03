@@ -14,6 +14,8 @@ let {crear} = require('../funciones/cotizacion/crear_cotizacion.js')
 let {bcotizacion} = require('../funciones/cotizacion/buscar_cotizacion.js')
 
 let {bcotizacion_limpia} = require('../funciones/cotizacion/modificar_cotizacion.js')
+let {bproductoagregado} = require('../funciones/cotizacion/coti_modificada_agregar_producto.js')
+let {crear_modificacion} = require('../funciones/cotizacion/crear_coti_modificada.js')
 
 router.use(express.json());
 
@@ -34,5 +36,7 @@ router.post('/creacion',crear)
 router.post('/buscar',bcotizacion)
 
 router.post('/modificar',bcotizacion_limpia)
+router.post('/idprdmodificadoagregado',bproductoagregado)
+router.post('/crearmodificacion',crear_modificacion)
 
 module.exports=router
