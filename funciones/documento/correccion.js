@@ -60,30 +60,10 @@ let bd_consulta = (res,factura,fecha,next)=>{
 }
 
 let doc_extraer_data=(res,fecha,factura_data,next)=>{
-    // let transporte_pronvicial
-    // let sp_sql="select fac.TipEnt,fac.cdocu,fac.ndocu,cliente.codcli,fac.nomcli,fac.Codcdv,fac.CodAlm,fac.codven_usu,vend.nomven,fac.dirent from mst01fac fac join tbl01ven vend on vend.codven=fac.codven_usu join tbl01tra tra on tra.codtra=fac.codtra join mst01cli cliente on cliente.codcli=fac.codcli where cdocu in ('01','03') and ndocu=@doc and flag='0'";
-    // if(factura_data[0]==3){
-    //     transporte_pronvicial="T0001";
-    //     sp_sql="select fac.TipEnt,fac.cdocu,fac.ndocu,cliente.codcli,fac.nomcli,fac.Codcdv,fac.CodAlm,fac.codven_usu,vend.nomven,fac.dirent,fac.codtra,tra.nomtra,depart.nomdep,provincia.nompro from mst01fac fac join tbl01ven vend on vend.codven=fac.codven_usu join tbl01tra tra on tra.codtra=fac.codtra join mst01cli cliente on cliente.codcli=fac.codcli join tbl01dep depart on (depart.coddep=cliente.coddep AND depart.codpai=cliente.codpai) join tbl01pro provincia on (provincia.codpro=cliente.codpro AND provincia.coddep=cliente.coddep AND provincia.codpai=cliente.codpai) where cdocu in ('01','03') and ndocu=@doc and flag='0'";
-    // }
-    // else if(factura_data[0]==4){
-    //     sp_sql="select fac.TipEnt,fac.cdocu,fac.ndocu,cliente.codcli,fac.nomcli,fac.Codcdv,fac.CodAlm,fac.codven_usu,vend.nomven,fac.dirent,fac.codtra2,tra.nomtra,depart.nomdep,provincia.nompro from mst01fac fac join tbl01ven vend on vend.codven=fac.codven_usu join tbl01tra tra on tra.codtra=fac.codtra2 join mst01cli cliente on cliente.codcli=fac.codcli join tbl01dep depart on (depart.coddep=cliente.coddep AND depart.codpai=cliente.codpai) join tbl01pro provincia on (provincia.codpro=cliente.codpro AND provincia.coddep=cliente.coddep AND provincia.codpai=cliente.codpai) where cdocu in ('01','03') and ndocu=@doc and flag='0'";
-    //     console.log("revisar para despues porqe puede que solo esta confirmado el tra cuando se genera la guia")
-    //     console.log("modificar luego la consulta segun los campos de transportista cuando sus campos estan vacios")
-    //     if(factura_data[9].trim()=='' && factura_data[8].trim()!='T0001'){
-    //         transporte_pronvicial=factura_data[8].trim();
-    //     }
-    //     else if(factura_data[9].trim()!='' && factura_data[8].trim()=='T0001'){
-    //         transporte_pronvicial=factura_data[9].trim();
-    //     }
-    //     else if(factura_data[9].trim()=='' && factura_data[8].trim()=='T0001'){
-    //         transporte_pronvicial="desconocido";
-    //     }
-    // }
     let sp_sql="jc_factura_despacho_identificador";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){
-            // res.status(401).send("error interno");
+            res.status(401).send("error interno");
             console.log(err);
         }
         else{
@@ -110,7 +90,6 @@ let doc_extraer_data=(res,fecha,factura_data,next)=>{
     })
     consulta.addParameter('factura',TYPES.VarChar,factura_data[2]);
     consulta.addParameter('entrega',TYPES.Int,factura_data[0]);
-    // conexion.execSql(consulta);
     conexion.callProcedure(consulta);
 }
 

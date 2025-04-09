@@ -11,4 +11,6 @@ const cuotas= require('../cuotas/cuotas.js');
 
 const lista = require('../lista/listas.js');
 
-module.exports={login,vendedor,coti,prom,cuotas,lista}
+const reporte = require('../reportes/reportes.js');
+
+module.exports={login,vendedor,coti,prom,cuotas,lista,reporte}

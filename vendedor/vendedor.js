@@ -41,11 +41,4 @@ router.post('/programar',buscar_factura,blistaprogramar)
 router.post('/programarventanilla',programar_factura)
 router.post('/programarventanillaminutos',programar_minutos)
 
-///aun en testeo
-// router.post('/reportes')
-
-// router.post('/clientes',(req,res)=>{})
-// router.post('/pedidos',(req,res)=>{})
-// router.post('/cotizaciones',(req,res)=>{})
-
 module.exports=router

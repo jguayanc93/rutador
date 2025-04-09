@@ -64,10 +64,10 @@ let bd_consulta = (res,vendedor)=>{
 let blistafactusxdia = (req,res,next) => {
     // let valid_coki = req.signedCookies;
     let {dia} = req.body;
-    let dia_exacto=dia.substring(8);
-    let vendedor_data = "V0274";
+    let dia_exacto=dia.substring(8);    
+    let vendedor_data = "V0266";
     // console.log(typeof dia_exacto);
-    // console.log(dia_exacto);
+    console.log(dia_exacto);
     // let vendedor_data = decodificador(valid_coki);
     // typeof vendedor_data=='object' ? bd_conexion(res,vendedor_data) : res.status(401).send(vendedor_data);
     typeof vendedor_data=='string' ? bd_conexion2(res,vendedor_data,dia_exacto) : res.status(401).send(vendedor_data);

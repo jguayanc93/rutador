@@ -4,37 +4,34 @@ const {decodificador} = require('../jwt/decodificador')
 const {objevacio} = require('../objvacio/reqbody')
 const XLSX = require('xlsx')
 
-let verificar_cuota = (req,res,next) =>{
+let verificar_precios = (req,res,next) =>{
     // let safe_coki = req.signedCookie;
     let proto_coki = req.body;
     // objevacio(safe_coki) ? res.status(401).send("logeate") : next();
     objevacio(proto_coki) ? res.status(401).send("logeate") : next();
 }
 
-let cuota_general = (req,res,next) =>{
+let mostrar_precios = (req,res,next) =>{
     // let valid_coki = req.signedCookie;
     // let vendedor_data = decodificador(valid_coki);
-    // let mes = req.body.mes;
-    let raw_data=req.body;
-    console.log(req.body)
+    let {marca}=req.body;
+    console.log(marca)
     let codven='V0172';
     // typeof vendedor_data=='object' ? bd_conexion(res,mes,vendedor_data.payload.vendedor) : res.status(401).send(vendedor_data);
-    typeof codven=='string' ? bd_conexion(res,codven) : res.status(401).send('vacio el cuerpo');
+    typeof codven=='string' ? bd_conexion(res,marca) : res.status(401).send('vacio el cuerpo');
 }
 
-let bd_conexion=(res,codven)=>{    
+let bd_conexion=(res,marca)=>{    
     conexion = new Connection(config);
     conexion.connect();
     conexion.on('connect',(err)=>{
         if(err){console.log("ERROR: ",err);}
-        else{ bd_consulta(res,codven); }
+        else{ bd_consulta(res,marca); }
     });
 }
 
-let bd_consulta = (res,codven) =>{
-    // let sp_sql="select (SUM(b.cant)-SUM(b.cancon))as 'por llegar',b.codi,alm1.descr,alm1.stoc as 'stoc principal',(select stoc from prd0108 where codi=alm1.codi) as 'stoc mm' from mst01ocm a join dtl01ocm b on (b.ndocu=a.ndocu) join prd0101 alm1 on (alm1.codi=b.codi AND alm1.marc=@marca) where alm1.estado=1 group by b.codi,alm1.descr,alm1.stoc,alm1.codi order by [stoc principal]";
-    let sp_sql="JC_CUOTA_GENERAL";
-    //let sp_sql="select a.nomfam,a.nommar,a.Venta,a.Costo,a.Renta,a.Porcentaje,dbo.CUOTA_ALCANCE_API2('ven',b.abrmar,a.CodFam),dbo.CUOTA_ALCANCE_API2('cos',b.abrmar,a.CodFam),dbo.CUOTA_ALCANCE_API2('can',b.abrmar,a.CodFam),dbo.CUOTA_ALCANCE_API2('ren',b.abrmar,a.CodFam),dbo.CUOTA_ALCANCE_API2('por',b.abrmar,a.CodFam) from tbl01comisiones a inner join tbl01mar b on (b.Nommar=a.nommar) order by a.CodFam";
+let bd_consulta = (res,marca) =>{
+    let sp_sql="select b.codf,b.descr,a.nomfam,b.Usr_001,b.pcus,b.vvus,ISNULL(c.pcus,0),ISNULL(c.vvus,0) from tbl01fam a inner join prd0101 b on (LEFT(b.codi,2)=a.codfam) left join prd0108 c on (c.codi=b.codi) where b.estado=1 AND b.marc=@marca";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){
             console.log(err);
@@ -56,36 +53,29 @@ let bd_consulta = (res,codven) =>{
                     })
                     respuesta.push(tmp);
                 });
-                // console.log(respuesta);
                 Object.assign(respuesta2,respuesta);
                 // console.log(respuesta2);
-                console.log("termine de ejecutar el query de cuota general")
                 ////CREAR UN EXEL PARA MANDAR SU REPORTE A DESCARGAR
                 let cadenitajson=JSON.stringify(respuesta2);
+                // res.status(200).json(cadenitajson);
                 ////////////////////////FORMATYO EXCEL
-                // let archivo_data=[respuesta];
                 const worksheet=XLSX.utils.json_to_sheet(respuesta);
                 const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook,worksheet,"cuota general");
+                XLSX.utils.book_append_sheet(workbook,worksheet,"stocc");
                 ///////cabesera
-                XLSX.utils.sheet_add_aoa(worksheet,[["familia","marca","cuota venta","cuota costo","cuota renta","cuota porcentaje","alcance venta","alcance costo","alcance cantidad","alcance renta","alcance porcentaje","porcentual venta","porcentual renta"]],{origin:"A1"});
+                XLSX.utils.sheet_add_aoa(worksheet,[["CODF","DESCRIPCION","FAMILIA","PART NUMBER","COSTO PRINCIPAL","VENTA PRINCIPAL","COSTO MYM","VENTA MYM"]],{origin:"A1"});
                 ///columna anchura
                 worksheet["!cols"]=[{wch:16}];
-                /////empaketar data y contruir el exel
-                // XLSX.writeFile(workbook,"usuario.xlsx");
-                ///////////////////////
                 ///////////BUFFER DE DATA CONVERTIDA                
                 let buf = XLSX.write(workbook,{type:"buffer",bookType:"xlsx"});
-                // res.status(200).json(cadenitajson);
                 res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                res.setHeader('Content-Disposition','attachment; filename="general.xlsx"');
+                res.setHeader('Content-Disposition','attachment; filename="precios.xlsx"');
                 res.status(200).send(buf);
             }
         }
     })
-    // consulta.addParameter('marca',TYPES.Int,mes);
-    // consulta.addParameter('marca',TYPES.Int,mes);
-    conexion.callProcedure(consulta);
+    consulta.addParameter('marca',TYPES.VarChar,marca);
+    conexion.execSql(consulta);
 }
 
-module.exports={verificar_cuota,cuota_general}
+module.exports={verificar_precios,mostrar_precios}

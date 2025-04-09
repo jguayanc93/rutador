@@ -43,4 +43,6 @@ app.use(process.env.BASE_URI+'/cuotas',ruta.cuotas);
 
 app.use(process.env.BASE_URI+'/lista',ruta.lista);
 
+app.use(process.env.BASE_URI+'/reporte',ruta.reporte)
+
 app.listen(port,()=>console.log("servicio levantado"))
