@@ -93,13 +93,14 @@ let bd_consulta2 = (res,ncoti,respuesta2)=>{
     for(let codi in respuesta2){
         codi_recolector.push(respuesta2[codi][9]);
     }
+    console.log("OBSERVA DESDE AQUI")
     console.log(codi_recolector);
     let contador=1;
     // let sp_sql="select a.idprom,b.codi from mst_promocion a join dtl_promocion_progra b on b.idprom=a.idprom where a.estado=1 group by a.idprom,b.codi";
     let sp_sql="select a.idprom,b.codi from mst_promocion a join dtl_promocion_progra b on b.idprom=a.idprom where a.estado=1 AND b.codi in(";
     for(let codi of codi_recolector){
-        console.log(typeof codi);
-        console.log(codi);
+        // console.log(typeof codi);
+        // console.log(codi);
         if(contador>=codi_recolector.length){
             sp_sql+="'"+codi+"'"+') group by a.idprom,b.codi';
         }
@@ -108,14 +109,13 @@ let bd_consulta2 = (res,ncoti,respuesta2)=>{
         }
         contador++;
     }
-    // console.log(sp);
+    // console.log(sp_sql);
 
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){ res.status(401).send("error interno"); }
         else{
             conexion.close();
             if(rows.length==0) res.status(401).send("no promo");
-            // else{ next() }
             else{
                 let respuesta=[];
                 let respuesta2={};
@@ -130,6 +130,7 @@ let bd_consulta2 = (res,ncoti,respuesta2)=>{
                     respuesta.push(tmp);
                 });
                 Object.assign(respuesta2,respuesta);
+                console.log("OBSERVA LOS IDPROM SIN FILTRAR")
                 console.log(respuesta2);
                 let nuevoobj={};
                 let filtro_final=[];
@@ -139,6 +140,7 @@ let bd_consulta2 = (res,ncoti,respuesta2)=>{
                     }
                     else{ nuevoobj[programacion[1]]=String(programacion[0])}
                 })
+                console.log("OBSERVA LOS IDPROM FILTRADOS")
                 console.log(nuevoobj);
                 Object.values(nuevoobj).forEach((valor)=>{
                     let separador=valor.split('/');

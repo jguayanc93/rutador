@@ -16,18 +16,22 @@ let bcotizacion = (req,res,next) => {
 }
 
 let bd_conexion=(res,ncoti)=>{
-    conexion = new Connection(config);
+    const conexion = new Connection(config);
     conexion.connect();
     conexion.on('connect',(err)=>{
         if(err){console.log("ERROR: ",err);}
-        else{ bd_consulta(res,ncoti); }
+        else{ bd_consulta(conexion,res,ncoti); }
     });
 }
-
-let bd_consulta = (res,ncoti)=>{
-    let sp_sql="select codf,marc,descr,cant,preu,totn,dsct,codalm from dtl01cot where ndocu=@coti order by item";
+/////SOLO DEBE PERMITIR BUSCAR COTIS EN FLAG 0
+let bd_consulta = (conexion,res,ncoti)=>{
+    // let sp_sql="select codf,marc,descr,cant,preu,totn,dsct,codalm from dtl01cot where ndocu=@coti order by item";
+    let sp_sql="select a.codf,a.marc,a.descr,a.cant,a.preu,a.totn,a.dsct,a.codalm from dtl01cot a inner join mst01cot b on (b.ndocu=a.ndocu) where b.flag=0 AND a.ndocu=@coti order by item";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
-        if(err){ res.status(401).send("error interno"); }
+        if(err){
+            conexion.close();
+            res.status(401).send("error interno");
+        }
         else{
             conexion.close();
             if(rows.length==0) res.status(401).send("sin resultados?");
@@ -44,7 +48,7 @@ let bd_consulta = (res,ncoti)=>{
                     })
                     respuesta.push(tmp);
                 });
-                console.log(respuesta);
+                // console.log(respuesta);
                 Object.assign(respuesta2,respuesta);
                 let cadenitajson=JSON.stringify(respuesta2);
                 res.status(200).json(cadenitajson);

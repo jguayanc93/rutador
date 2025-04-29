@@ -158,39 +158,6 @@ let prom_detallado=(res,nprom,cotdetalle,promcabesa,tipopromo,tipometrica)=>{
     conexion.execSql(consulta);
 }
 
-// let cantidad_bonitem=(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica,codis_aprobados,cantidad_regalo)=>{
-//     // let sp_sql="select b.codf,b.marc,b.descr,b.pcus from dtl_promocion_bonitem a join prd0101 b on b.codf=a.boncodf where a.idprom='10537' and a.codi='0505-010045' order by a.positem";
-//     let sp_sql="select b.codi,b.codf,b.marc,b.descr,b.pcus from dtl_promocion_bonitem a join prd0101 b on b.codf=a.boncodf where a.idprom=@nprom and a.codi=@codi order by a.positem";
-//         let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
-//             if(err){ res.status(401).send("error promdetalle"); }
-//             else{
-//                 // conexion.close();
-//                 if(rows.length==0) res.status(401).send("sin resultados?");
-//                 else{
-//                     let respuesta=[];
-//                     let respuesta2={};
-//                     let contador=0;
-//                     rows.forEach(fila=>{
-//                         let tmp={};
-//                         fila.map(data=>{
-//                             if(contador>=fila.length) contador=0;
-//                             typeof data.value=='string' ? tmp[contador]=data.value.trim() : tmp[contador]=data.value;
-//                             contador++;
-//                         })
-//                         respuesta.push(tmp);
-//                     });
-//                     Object.assign(respuesta2,respuesta);
-//                     console.log("esto deberia ser el objeto con todos sus regalos respectivos");
-//                     console.log(respuesta2);
-//                     final_331(res,nprom,cotdetalle,promcabesa,respuesta2,tipopromo,tipometrica,codis_aprobados,cantidad_regalo,respuesta2);
-//             }
-//         }
-//     })
-//     consulta.addParameter('nprom',TYPES.VarChar,nprom);
-//     consulta.addParameter('codi',TYPES.VarChar,codis_aprobados[0]);
-//     conexion.execSql(consulta);
-// }
-
 let direccionador2=(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica)=>{
     let respuesta_devuelta;
     let promo_terminada;
