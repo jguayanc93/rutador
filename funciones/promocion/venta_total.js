@@ -6,8 +6,13 @@ let descuento_correspondiente=(res,nprom,cotdetalle,promcabesa,promdetalle,tipop
     let numero_item=1;
     numero_item=Object.keys(cotdetalle).length;
     let cantidad_correspondiente_obtenida;
-    // tipometrica==1 ? cantidad_correspondiente_obtenida=m_valorizado() : cantidad_correspondiente_obtenida=m_unidades(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica,numero_item);
-    tipometrica==1 ? cantidad_correspondiente_obtenida=m_valorizado_conjunto(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica,numero_item) : cantidad_correspondiente_obtenida=m_unidades_conjunto(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica,numero_item);
+    // tipometrica==1 ? cantidad_correspondiente_obtenida=m_valorizado_conjunto(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica,numero_item) : cantidad_correspondiente_obtenida=m_unidades_conjunto(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica,numero_item);
+    if(tipometrica==1){
+        cantidad_correspondiente_obtenida=m_valorizado_conjunto(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica,numero_item);
+    }
+    else{
+        cantidad_correspondiente_obtenida=m_unidades_conjunto(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica,numero_item);
+    }
     return cantidad_correspondiente_obtenida;
 }
 

@@ -125,8 +125,6 @@ let prom_cabesera=(res,nprom,cotdetalle,grupos)=>{
 }
 
 let prom_detallado=(res,nprom,cotdetalle,promcabesa,tipopromo,tipometrica)=>{
-    // let sp_sql="select a.codi,a.monto,a.dsct,a.boncodf,a.stoclim,b.marc from dtl_promocion_progra a join prd0101 b on a.codi=b.codi where idprom=@nprom";
-    // let sp_sql="select a.codi,a.monto,a.dsct,a.boncodf,a.stoclim,b.marc,b.codi,b.pcus from dtl_promocion_progra a join prd0101 b on a.codi=b.codi where idprom=@nprom";
     let sp_sql="select a.codi,a.monto,a.dsct,a.boncodf,a.stoclim,b.marc,a.idprom,b.pcus from dtl_promocion_progra a join prd0101 b on a.codi=b.codi where idprom=@nprom";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){ res.status(401).send("error promdetalle"); }
@@ -161,11 +159,24 @@ let prom_detallado=(res,nprom,cotdetalle,promcabesa,tipopromo,tipometrica)=>{
 let direccionador2=(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica)=>{
     let respuesta_devuelta;
     let promo_terminada;
-    tipopromo[0]==1 ? respuesta_devuelta=v_xitems(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica) : respuesta_devuelta=v_xitotalisado(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica);
+    // tipopromo[0]==1 ? respuesta_devuelta=v_xitems(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica) : respuesta_devuelta=v_xitotalisado(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica);
+    if(tipopromo[0]==1){
+        respuesta_devuelta=v_xitems(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica);
+    }
+    else{
+        respuesta_devuelta=v_xitotalisado(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica);
+    }
     console.log("esto regreso despues de mandarlo al filtro de promociones")
     console.log(respuesta_devuelta);
     console.log("esto es el tipo de promo")
     console.log(tipopromo)
+    //////VERIFICAR QUE SI ES VACIO RETORNAR NO CUMPLIO CON LA PROMO
+    if(respuesta_devuelta.length===0){
+        ////RETORNO DE LA RESPUESTA QUE NO CUMPLIO LA PROMO
+        res.status(401).send("no promo aplicable");
+    }
+    else{
+    ///////////////////
     if(tipopromo[1]==1){
         // promo_terminada=descuento(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica,respuesta_devuelta[0],respuesta_devuelta[1]);
         // descuento(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica,respuesta_devuelta[0],respuesta_devuelta[1],respuesta_devuelta[2],respuesta_devuelta[3],respuesta_devuelta[4]);
@@ -178,6 +189,7 @@ let direccionador2=(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipome
     }
     // res.status(200).json(respuesta_devuelta)
     // res.status(200).json(promo_terminada)
+    }
 }
 
 let direccionador=(res,nprom,cotdetalle,promcabesa,promdetalle,tipopromo,tipometrica)=>{
