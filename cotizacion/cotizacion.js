@@ -25,7 +25,8 @@ router.post('/identificador',idcliente)
 
 router.post('/productoid',bproducto)///////producto identificado
 router.post('/producto',bproductos)
-// router.post('/prodf')
+//router.post('/productopartnumber',)/////producto por partnumber
+
 
 router.post('/rentabilidad',rentabilidad)
 

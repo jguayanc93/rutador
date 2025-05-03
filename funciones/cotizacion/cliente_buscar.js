@@ -27,7 +27,7 @@ let bd_conexion=(res,sugerencia)=>{
 let bd_consulta = (res,sugerencia)=>{
     // let caracter="'"+"%"+sugerencia+"%"+"'";///no usar porqe sobre escribe las comillas simples
     let caracter="%"+sugerencia+"%";
-    let sp_sql="select top 5 codcli,nomcli from mst01cli where estado=1 and nomcli like @pista";
+    let sp_sql="select top 4 codcli,nomcli from mst01cli where estado=1 and nomcli like @pista";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){ res.status(401).send("error interno"); }
         else{
