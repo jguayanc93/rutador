@@ -26,7 +26,7 @@ let bd_conexion=(res,sugerencia)=>{
 
 let bd_consulta = (res,sugerencia)=>{
     let caracter="%"+sugerencia+"%";
-    let sp_sql="select top 6 codtra,nomtra from tbl01tra where estado=1 and nomtra like @pista"
+    let sp_sql="select top 5 codtra,nomtra from tbl01tra where estado=1 and nomtra like @pista"
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){ res.status(401).send("error interno"); }
         else{

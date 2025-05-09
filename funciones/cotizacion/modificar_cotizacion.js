@@ -12,7 +12,8 @@ let bcotizacion_limpia = (req,res,next) => {
     // let vendedor_data = decodificador(valid_coki.cdk);
     let vendedor_data='cadena';
     // typeof vendedor_data=='string' ? bd_conexion(res,mes,vendedor_data.vendedor) : res.status(401).send(vendedor_data);
-    typeof vendedor_data=='string' ? bd_conexion(res,ncoti) : res.status(401).send(vendedor_data);
+    let coticompleta="009-00"+ncoti;
+    typeof vendedor_data=='string' ? bd_conexion(res,coticompleta) : res.status(401).send(vendedor_data);
 }
 
 let bd_conexion=(res,ncoti)=>{

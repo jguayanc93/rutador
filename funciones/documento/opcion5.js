@@ -26,7 +26,7 @@ let bd_conexion=(res,sugerencia,cli)=>{
 
 let bd_consulta = (res,sugerencia,cli)=>{
     let caracter="%"+sugerencia+"%";
-    let sp_sql="select top 6 codven,nomven from tbl01ven where estado=1 AND nomven like @sugerencia";
+    let sp_sql="select top 5 codven,nomven from tbl01ven where estado=1 AND nomven like @sugerencia";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){ res.status(401).send("error interno"); }
         else{

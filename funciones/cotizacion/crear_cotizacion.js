@@ -206,7 +206,7 @@ let minibucle=(res,dataenviada,objtotal,totalisado,tcm,fecha,formato,longitud,or
         consulta2.addParameter('dsct',TYPES.Float,objtotal[orden[contador]][6]);
         consulta2.addParameter('totn',TYPES.Float,objtotal[orden[contador]][7]);
         consulta2.addParameter('AnulaDetalle',TYPES.Char,'');
-        consulta2.addParameter('codalm',TYPES.Char,'01');
+        consulta2.addParameter('codalm',TYPES.Char,dataenviada["alm"]);
         consulta2.addParameter('cost',TYPES.Float,objtotal[orden[contador]][8]);
         consulta2.addParameter('msto',TYPES.Char,'S');
         consulta2.addParameter('ucon',TYPES.Float,1.000);
