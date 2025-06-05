@@ -13,7 +13,7 @@ let chekeador=(req,res,next)=>{
 let blistaprogramar = (req,res,next) => {
     // let valid_coki = req.signedCookies;
     // let {dia} = req.body;
-    let vendedor_data = "V0266";
+    let vendedor_data = "V0274";
     // let vendedor_data = decodificador(valid_coki);
     // typeof vendedor_data=='object' ? bd_conexion(res,vendedor_data) : res.status(401).send(vendedor_data);
     typeof vendedor_data=='string' ? bd_conexion(res,vendedor_data) : res.status(401).send(vendedor_data);
@@ -65,7 +65,7 @@ let blistaprogramarxdia = (req,res,next) => {
     // let valid_coki = req.signedCookies;
     let {dia} = req.body;
     let dia_exacto=dia.substring(8);
-    let vendedor_data = "V0266";
+    let vendedor_data = "V0274";
     // console.log(typeof dia_exacto);
     // console.log(dia_exacto);
     // let vendedor_data = decodificador(valid_coki);

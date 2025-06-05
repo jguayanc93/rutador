@@ -30,7 +30,9 @@ let bd_consulta = (res,sugerencia,cctl)=>{
     let caracter=sugerencia;
     
     // let sp_sql="select top 10 a.codi,a.descr,CAST(a.stoc as int)as'stoc',a.pcus,a.vvus,b.dscto_maxven,a.codf,a.marc from prd0101 a join dtl_dscto_marca_tc b on b.codmar=a.codmar join mst01cli c on c.tipocl=b.codtcl where a.estado=1 and cast(a.stoc as int)>0 and a.descr like @pista and c.tipocl=@alfabeto group by a.codi,a.descr,a.stoc,a.pcus,a.vvus,b.dscto_maxven,a.codf,a.marc";
-    let sp_sql="select top 2 a.codi,a.descr,CAST(a.stoc as int)as'stoc',a.pcus,a.vvus,b.dscto_maxven,a.codf,a.marc from prd0101 a join dtl_dscto_marca_tc b on (b.codmar=a.codmar) join mst01cli c on (c.tipocl=b.codtcl) where a.estado=1 and a.codi=@pista and c.tipocl=@alfabeto group by a.codi,a.descr,a.stoc,a.pcus,a.vvus,b.dscto_maxven,a.codf,a.marc";
+
+    // let sp_sql="select top 2 a.codi,a.descr,CAST(a.stoc as int)as'stoc',a.pcus,a.vvus,b.dscto_maxven,a.codf,a.marc from prd0101 a join dtl_dscto_marca_tc b on (b.codmar=a.codmar) join mst01cli c on (c.tipocl=b.codtcl) where a.estado=1 and a.codi=@pista and c.tipocl=@alfabeto group by a.codi,a.descr,a.stoc,a.pcus,a.vvus,b.dscto_maxven,a.codf,a.marc";
+    let sp_sql="select top 2 a.codi,a.descr,CAST(a.stoc as int)as'stoc',a.pcus,a.vvus,b.dscto_default,a.codf,a.marc from prd0101 a join dtl_dscto_marca_tc b on (b.codmar=a.codmar) join mst01cli c on (c.tipocl=b.codtcl) where a.estado=1 and a.codi=@pista and c.tipocl=@alfabeto group by a.codi,a.descr,a.stoc,a.pcus,a.vvus,b.dscto_default,a.codf,a.marc";
     let consulta = new Request(sp_sql,(err,rowCount,rows)=>{
         if(err){ res.status(401).send("error interno"); }
         else{

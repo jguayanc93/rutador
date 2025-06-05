@@ -37,8 +37,10 @@ let calc_rentibilidad = (res,objeto) => {
         let diferencia=(totalisado-(saca_costo).toFixed(2)).toFixed(2);
         /////solo para rentabilidad
         let rentabilidad=(diferencia/saca_costo).toFixed(4);
+        ////RENTABILIDAD EN PORCENTAJE BORRAR MAS ADELANTE
+        let renta=(parseFloat(rentabilidad)*100).toFixed(3);
 
-        filtrado[indice]=[nombre,cantidad,venta,descuento,saca_costo,totalisado,diferencia,rentabilidad];
+        filtrado[indice]=[nombre,cantidad,venta,descuento,saca_costo,totalisado,diferencia,renta];
     }
     // return filtrado;
     res.status(200).json(filtrado);

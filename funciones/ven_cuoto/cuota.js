@@ -14,7 +14,7 @@ let ven_cuota = (req,res,next) => {
     let valid_coki = req.signedCookies;
     let vendedor_data = decodificador(valid_coki);
     let mes = req.body.mes;
-    // let codven='V0172';
+    // let codven='V0266';
     typeof vendedor_data=='object' ? bd_conexion(res,mes,vendedor_data) : res.status(401).send(vendedor_data);
     // typeof codven=='string' ? bd_conexion(res,mes,codven) : res.status(401).send(vendedor_data);
 }
@@ -48,7 +48,6 @@ let bd_consulta = (res,mes,codven) =>{
                     })
                     respuesta.push(tmp);
                 });
-                //console.log(respuesta);
                 Object.assign(respuesta2,respuesta);
                 console.log(respuesta2);
                 ////CREAR UNA NUEVA SALIDA PARA DESPLEGAR LOS MONTOS
