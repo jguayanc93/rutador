@@ -8,6 +8,7 @@ let {jwtgenerator} = require('../jwt/generador');
 let login =(req,res,next)=> objevacio(req.body) ? res.send("body objeto vacio") : extraer_data(res,req.body);
 
 let extraer_data=(res,body)=>{
+    // console.log(body)
     let campos=[];
     for(const valor of Object.values(body)) campos.push(valor);
     logeo_conexion(res,...campos);
